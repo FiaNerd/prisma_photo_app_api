@@ -25,6 +25,7 @@ export const show = async (req: Request, res: Response) => {
  * Create a resource
  */
 export const store = async (req: Request, res: Response) => {
+
 }
 
 /**

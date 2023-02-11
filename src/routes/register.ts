@@ -3,7 +3,7 @@
  */
 import express from 'express'
 import { body } from 'express-validator'
-import { index, show, store, update, destroy } from '../controllers/_controller'
+import { index, show, store, update, destroy } from '../controllers/register_controller'
 const router = express.Router()
 
 /**

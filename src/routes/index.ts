@@ -1,5 +1,5 @@
 import express from "express"
-import resource from './_router'
+import register from './register'
 
 // instantiate a new router
 const router = express.Router()
@@ -13,9 +13,6 @@ router.get('/', (req, res) => {
 	})
 })
 
-/**
- * [EXAMPLE] /resource
- */
-// router.use('/resource', resource)
+router.use('/register', register)
 
 export default router
