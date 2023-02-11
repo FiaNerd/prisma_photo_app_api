@@ -1,5 +1,5 @@
 import express from "express"
-import register from './register'
+import { register } from '../controllers/user_controller'
 
 // instantiate a new router
 const router = express.Router()
