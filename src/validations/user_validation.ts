@@ -11,7 +11,8 @@ export const registerValidationRules = [
 	body('password')
 		.isString()
 		.bail()
-		.isLength({ min: 8}),
+		.isLength({ min: 6})
+		.withMessage("Password must be at least 6 characters"),
 
 	body('first_name')
 		.trim()
