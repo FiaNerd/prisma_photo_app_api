@@ -1,5 +1,5 @@
 import express from "express"
-import { register } from '../controllers/user_controller'
+import { registerUser } from '../controllers/user_controller'
 
 // instantiate a new router
 const router = express.Router()
@@ -13,6 +13,6 @@ router.get('/', (req, res) => {
 	})
 })
 
-router.use('/register', register)
+router.use('/register', registerUser)
 
 export default router

@@ -5,21 +5,17 @@ import Debug from 'debug'
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
-import prisma from '../prisma'
-
+import { createUser } from '../services/user_service'
 // Create a new debug instance
 const debug = Debug('prisma-boilerplate:I_AM_LAZY_AND_HAVE_NOT_CHANGED_THIS_😛')
 
 /**
- * Get all resources
+ * Create a resource
  */
-export const index = async (req: Request, res: Response) => {
-}
+export const registerUser = async (req: Request, res: Response) => {
 
-/**
- * Get a single resource
- */
-export const show = async (req: Request, res: Response) => {
+	const reqBody = req.body
+
 	const validationErrors = validationResult(req)
 	if (!validationErrors.isEmpty()) {
 		return res.status(400).send({
@@ -29,6 +25,17 @@ export const show = async (req: Request, res: Response) => {
 	}
 
 	try {
+		const register = await createUser({
+			email:      reqBody.email,
+			password:   reqBody.password,
+			first_name: reqBody.first_name,
+			last_name:  reqBody.last_name,
+		})
+
+		res.status(201).send({
+			status: 'success',
+			mesage: register,
+		})
 
 	} catch (err) {
 		res.status(500).send({
@@ -37,23 +44,5 @@ export const show = async (req: Request, res: Response) => {
 		})
 	}
 
-}
 
-/**
- * Create a resource
- */
-export const register = async (req: Request, res: Response) => {
-
-}
-
-/**
- * Update a resource
- */
-export const update = async (req: Request, res: Response) => {
-}
-
-/**
- * Delete a resource
- */
-export const destroy = async (req: Request, res: Response) => {
 }
