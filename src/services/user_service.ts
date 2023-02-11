@@ -6,3 +6,5 @@ export const createUser = async (data: CreateUserData) => {
 		data: data,
 	})
 }
+
+

@@ -1,36 +1,40 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
-}
-
-model Album {
-    id     Int     @id @default(autoincrement())
-    title  String  @db.VarChar(100)
-    photos Photo[]
-    user   User    @relation(fields: [userId], references: [id])
-    userId Int
-}
-
-model Photo {
-    id      Int     @id @default(autoincrement())
-    title   String  @db.VarChar(100)
-    url     String
-    comment String? @db.VarChar(1000)
-    albums  Album[]
-    user    User    @relation(fields: [userId], references: [id])
-    userId  Int
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-    id         Int     @id @default(autoincrement())
-    email      String  @unique
-    password   String
-    first_name String  @db.VarChar(100)
-    last_name  String  @db.VarChar(100)
-    albums     Album[]
-    photos     Photo[]
+  id         Int     @id @default(autoincrement()) @db.UnsignedInt
+  email      String  @unique
+  password   String
+  first_name String  @db.VarChar(100)
+  last_name  String  @db.VarChar(100)
+  albums     Album[]
+  photos     Photo[]
+}
+
+model Album {
+  id      Int     @id @default(autoincrement()) @db.UnsignedInt
+  title   String  @db.VarChar(100)
+  photos  Photo[]
+  user    User    @relation(fields: [user_id], references: [id])
+  user_id Int     @db.UnsignedInt
+
+  @@index([user_id], map: "Album_user_id_fkey")
+}
+
+model Photo {
+  id      Int     @id @default(autoincrement()) @db.UnsignedInt
+  title   String  @db.VarChar(100)
+  url     String
+  comment String? @db.VarChar(1000)
+  albums  Album[]
+  user    User    @relation(fields: [user_id], references: [id])
+  user_id Int     @db.UnsignedInt
+
+  @@index([user_id], map: "Photo_user_id_fkey")
 }

@@ -4,7 +4,7 @@
 import Debug from 'debug'
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
-import { validationResult } from 'express-validator'
+import { matchedData, validationResult } from 'express-validator'
 import { createUser } from '../services/user_service'
 // Create a new debug instance
 const debug = Debug('prisma-boilerplate:I_AM_LAZY_AND_HAVE_NOT_CHANGED_THIS_😛')
@@ -25,6 +25,9 @@ export const registerUser = async (req: Request, res: Response) => {
 	}
 
 	try {
+		const validatedData = matchedData(req)
+		console.log(validatedData.data, req.body);
+
 		const register = await createUser({
 			email:      reqBody.email,
 			password:   reqBody.password,
