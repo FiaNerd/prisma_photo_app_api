@@ -82,11 +82,14 @@ export const registerUser = async (req: Request, res: Response) => {
 			last_name:  validatedData.last_name,
 		})
 
-		 res.status(201).send({
-			status: 'success',
-			message: register,
-		})
-
+		return res.status(201).send({
+			status: "success",
+			data: {
+			  email: register.email,
+			  first_name: register.first_name,
+			  last_name: register.last_name
+			}
+		  })
 	} catch (err) {
 		return res.status(500).send({
 			staus: 'error',
