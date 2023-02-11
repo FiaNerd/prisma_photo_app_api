@@ -19,6 +19,14 @@ export const index = async (req: Request, res: Response) => {
  * Get a single resource
  */
 export const show = async (req: Request, res: Response) => {
+	try {
+
+	} catch (err) {
+		return res.status(500).send({
+			staus: 'error',
+			message: 'Could not create a new user'
+		})
+	}
 }
 
 /**
