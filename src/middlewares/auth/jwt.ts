@@ -27,5 +27,17 @@ export const validateToken = (req: Request, res: Response, next: NextFunction) =
 		})
 	}
 
+	try {
+
+
+	} catch (err) {
+		debug("Token failed verification", err)
+
+		return res.status(401).send({
+			status: "fail",
+			data: "Authorization required",
+		})
+	}
+
 	next()
 }
