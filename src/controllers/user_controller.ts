@@ -14,8 +14,6 @@ const debug = Debug('prisma-boilerplate:I_AM_LAZY_AND_HAVE_NOT_CHANGED_THIS_😛
  */
 export const registerUser = async (req: Request, res: Response) => {
 
-	const reqBody = req.body
-
 	const validationErrors = validationResult(req)
 	if (!validationErrors.isEmpty()) {
 		return res.status(400).send({
@@ -26,13 +24,14 @@ export const registerUser = async (req: Request, res: Response) => {
 
 	try {
 		const validatedData = matchedData(req)
-		console.log(validatedData.data, req.body);
+		console.log("req body", req.body);
+		console.log("validate data", validatedData);
 
 		const register = await createUser({
-			email:      reqBody.email,
-			password:   reqBody.password,
-			first_name: reqBody.first_name,
-			last_name:  reqBody.last_name,
+			email:      validatedData.email,
+			password:   validatedData.password,
+			first_name: validatedData.first_name,
+			last_name:  validatedData.last_name,
 		})
 
 		res.status(201).send({
