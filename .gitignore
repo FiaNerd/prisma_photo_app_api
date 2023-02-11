@@ -1,0 +1,16 @@
+# misc
+.DS_Store
+.vs/
+bin/
+obj/
+.env 
+.htaccess
+*.code-workspace
+*-nogit
+
+# production
+/**/build
+/**/dist
+
+# dependencies
+node_modules/
