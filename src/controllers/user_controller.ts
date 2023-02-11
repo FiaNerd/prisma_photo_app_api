@@ -21,11 +21,17 @@ export const registerUser = async (req: Request, res: Response) => {
 			data: validationErrors.array(),
 		})
 	}
+	const validatedData = matchedData(req)
+	console.log("req body", req.body);
+	console.log("validate data", validatedData);
 
+	const hashedPassword = await bcrypt.hash(validatedData.password, Number(process.env.SALT_ROUNDS) || 10)
+	console.log("Hashed password:", hashedPassword)
+
+	// Replace password with hashed password
+
+	validatedData.password = hashedPassword
 	try {
-		const validatedData = matchedData(req)
-		console.log("req body", req.body);
-		console.log("validate data", validatedData);
 
 		const register = await createUser({
 			email:      validatedData.email,
@@ -41,7 +47,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
 	} catch (err) {
 		res.status(500).send({
-			staus: 'fail',
+			staus: 'error',
 			message: 'Could not create a new user'
 		})
 	}
