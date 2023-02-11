@@ -37,6 +37,7 @@ export const loginUser = async (req: Request, res: Response) => {
 	}
 
 
+	// TODO: SE om du kan flytta denna till server filen eller app filen istället, så den säger till tidigare att om man inte hat genererat någon acces token
 	if (!process.env.ACCESS_TOKEN_SECRET) {
 		return res.status(500).send({
 			status: "error",
