@@ -94,6 +94,4 @@ export const registerUser = async (req: Request, res: Response) => {
 			message: 'Could not create a new user'
 		})
 	}
-
-
 }

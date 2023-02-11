@@ -15,7 +15,6 @@ router.get('/', (req, res) => {
 	})
 })
 
-
 /*
 	POST /register
 */
@@ -24,6 +23,7 @@ router.use('/register', registerValidationRules, registerUser)
 /*
 	POST /login
 */
-router.use('/login', validateToken, loginUser)
+// router.use('/login', validateToken, loginUser)
+router.use('/login', loginUser)
 
 export default router
