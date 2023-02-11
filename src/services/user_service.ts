@@ -7,4 +7,12 @@ export const createUser = async (data: CreateUserData) => {
 	})
 }
 
+export const getUserByEmail = async (email: string) => {
+	return prisma.user.findUniqueOrThrow({
+		where: {
+			email: email
+		},
+	})
+}
+
 
