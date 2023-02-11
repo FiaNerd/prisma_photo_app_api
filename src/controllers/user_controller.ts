@@ -32,7 +32,6 @@ export const registerUser = async (req: Request, res: Response) => {
 
 	validatedData.password = hashedPassword
 	try {
-
 		const register = await createUser({
 			email:      validatedData.email,
 			password:   validatedData.password,
@@ -40,13 +39,13 @@ export const registerUser = async (req: Request, res: Response) => {
 			last_name:  validatedData.last_name,
 		})
 
-		res.status(201).send({
+		 res.status(201).send({
 			status: 'success',
-			mesage: register,
+			message: register,
 		})
 
 	} catch (err) {
-		res.status(500).send({
+		return res.status(500).send({
 			staus: 'error',
 			message: 'Could not create a new user'
 		})
