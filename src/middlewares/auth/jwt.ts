@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import Debug from 'debug'
 import { Request, Response, NextFunction } from 'express'
+import { JwtPayload } from '../../types'
 
 const debug = Debug('prsima_photo_app_api:jwt')
 
@@ -28,7 +29,10 @@ export const validateToken = (req: Request, res: Response, next: NextFunction) =
 	}
 
 	try {
+		const payload = (jwt.verify(token, process.env.ACCESS_TOKEN_SECRET || "") as unknown) as JwtPayload
+		debug("Yay got 📦: %o", payload)
 
+		req.token = payload
 
 	} catch (err) {
 		debug("Token failed verification", err)

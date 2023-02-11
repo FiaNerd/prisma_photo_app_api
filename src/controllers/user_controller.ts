@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
 import { createUser, getUserByEmail } from '../services/user_service'
+import { JwtPayload } from '../types'
 // Create a new debug instance
 const debug = Debug('prisma-boilerplate:I_AM_LAZY_AND_HAVE_NOT_CHANGED_THIS_😛')
 
@@ -30,7 +31,7 @@ export const loginUser = async (req: Request, res: Response) => {
 		})
 	}
 
-	const payload = {
+	const payload: JwtPayload = {
 		sub: user.id,
 		name: user.first_name,
 		email: user.email,
