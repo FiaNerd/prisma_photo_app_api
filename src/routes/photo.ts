@@ -5,24 +5,25 @@ import { index, show, store, update, destroy } from '../controllers/photo_contro
 const router = express.Router()
 
 /**
- * GET /resource
+ * GET /photos
  */
 router.get('/', index)
 
 /**
- * GET /resource/:resourceId
+ * GET /photos/:photoId
  */
 router.get('/:photoId', show)
 
 /**
- * POST /resource
+ * POST /photos
  */
 router.post('/', store)
 
 /**
- * PATCH /resource/:resourceId
+ * PATCH /photos/:photoId
  */
-router.patch('/:resourceId', [], update)
+router.patch('/:photoId', update)
+// router.patch('/:photoId', [], update)
 
 /**
  * DELETE /resource/:resourceId

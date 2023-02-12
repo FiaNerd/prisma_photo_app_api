@@ -1,5 +1,5 @@
 import prisma from '../prisma'
-import { CreatePhoto } from '../types'
+import { CreatePhoto, UpdatePhotoData } from '../types'
 
 export const getPhotos = (user_id: number) => {
 	return prisma.photo.findMany({
@@ -36,4 +36,19 @@ export const createPhoto = async (data: CreatePhoto) => {
 			}}
 		}
 	});
+  };
+
+
+  export const updatePhoto = async (photoId: number, photoUpdate: UpdatePhotoData) => {
+	try {
+	  return await prisma.photo.update({
+		where: {
+		  id: photoId
+		},
+		data: photoUpdate
+	  });
+	} catch (error) {
+	  console.error(error);
+	  throw error;
+	}
   };

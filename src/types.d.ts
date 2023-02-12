@@ -13,6 +13,13 @@
 		user_id: number,
  	}
 
+
+	export type UpdatePhotoData = {
+		title?: string,
+		comment?: string,
+	}
+
+
 	export type JwtPayload = {
 		sub: number,
 		name: string,
