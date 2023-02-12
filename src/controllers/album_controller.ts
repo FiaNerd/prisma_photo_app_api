@@ -1,7 +1,7 @@
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import {  getAlbums, getAlbumById, createAlbum } from '../services/album_service'
+import {  getAlbums, getAlbumById, createAlbum, connectPhotoToAlbum } from '../services/album_service'
 
 const debug = Debug('prisma_photo_app_api:album_contoller')
 
@@ -124,4 +124,9 @@ const debug = Debug('prisma_photo_app_api:album_contoller')
 				message: 'Sorry, the server is down'
 			})
 		}
+	}
+
+
+	export const addPhotoToAlbum = async (req: Request, res: Response) => {
+
 	}

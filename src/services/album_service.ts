@@ -1,6 +1,5 @@
 import prisma from '../prisma'
-import { CreateAlbumData } from '../types'
-
+import { CreateAlbumData, CreatePhoto } from '../types'
 
 	export const getAlbums = (user_id: number) => {
 		return prisma.album.findMany({
@@ -23,7 +22,6 @@ import { CreateAlbumData } from '../types'
 	}
 
 
-
 	export const createAlbum = async (data: CreateAlbumData) => {
 		const { title, user_id } = data;
 
@@ -38,4 +36,23 @@ import { CreateAlbumData } from '../types'
 			}
 		});
 	};
+
+	export const connectPhotoToAlbum = async (albumId: number, photoId: number) => {
+		return await prisma.album.update({
+			where: {
+				id: albumId
+			},
+			data: {
+				photos: {
+					connect: {
+						id: photoId,
+					}
+				}
+			},
+			include: {
+				photos: true,
+			}
+
+		})
+	}
 
