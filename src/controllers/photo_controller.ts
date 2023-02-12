@@ -3,7 +3,9 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import { createPhoto } from '../services/user_service'
+import { createPhoto } from '../services/photo_service'
+
+const debug = Debug('prisma_photo_app_api:photo_contoller')
 
 export const index = async (req: Request, res: Response) => {
 
@@ -31,10 +33,10 @@ export const store = async (req: Request, res: Response) => {
 
 	try {
 		const photo = await createPhoto({
-			title:      validatedData.title,
-			url:   validatedData.url,
+			title:   validatedData.title,
+			url:     validatedData.url,
 			comment: validatedData.comment,
-			// user_id:  validatedData.user_id,
+			user_id: Number(validatedData.user_id),
 		})
 
 		return res.status(201).send({
@@ -45,9 +47,12 @@ export const store = async (req: Request, res: Response) => {
 		  })
 
 	} catch (err) {
+		debug("Error thrown when finding book with id %o: %o",)
+		console.error("Error thrown when creating a photo: ", err)
+
 		return res.status(500).send({
 			staus: 'error',
-			message: 'Could not create a new user'
+			message: 'Could not create a new photo'
 		})
 	}
 }

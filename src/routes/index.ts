@@ -1,6 +1,8 @@
-import { registerValidationRules } from '../validations/user_validation'
 import express from "express"
+import { registerValidationRules } from '../validations/user_validation'
+import { photoValidationRules } from '../validations/photo_validation'
 import { registerUser, loginUser } from '../controllers/user_controller'
+import photos from './photo'
 
 // instantiate a new router
 const router = express.Router()
@@ -24,5 +26,10 @@ router.use('/register', registerValidationRules, registerUser)
 	POST /login
 */
 router.use('/login', loginUser)
+
+/*
+	POST /photos
+*/
+router.use('/photos', photoValidationRules, photos)
 
 export default router
