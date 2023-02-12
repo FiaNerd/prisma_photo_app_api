@@ -1,9 +1,10 @@
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import { createPhoto, getPhotos } from '../services/photo_service'
+import { createPhoto, getPhotos, getPhotoById } from '../services/photo_service'
 
 const debug = Debug('prisma_photo_app_api:photo_contoller')
+
 export const index = async (req: Request, res: Response) => {
 
 	const user_id = req.token ? req.token.user_id : NaN;
@@ -32,15 +33,53 @@ export const index = async (req: Request, res: Response) => {
 	  })
 	}
   }
+	export const show = async (req: Request, res: Response) => {
+
+		const photoId = Number(req.params.photoId)
+
+		const user_id = req.token ? req.token.user_id : NaN;
+		console.log("user_id", user_id);
+		console.log("req token", req.token);
+
+		if (!req.token || isNaN(req.token.user_id)) {
+		return res.status(401).send({
+			status: "fail",
+			message: "User is not authenticated"
+		});
+		}
+
+		try {
+		const photo = await getPhotoById(photoId);
+
+		if (!photo) {
+			return res.status(404).send({
+			status: "fail",
+			message: "Photo not found"
+			});
+		}
+
+		if (photo.user_id !== user_id) {
+			return res.status(403).send({
+			status: "fail",
+			message: "Not authorized to access this photo"
+			});
+		}
+
+		return res.status(200).send({
+			status: "success",
+			data: photo
+		});
+
+		} catch (err) {
+		return res.status(500).send({
+			status: 'error',
+			message: 'Could not get the photo'
+		});
+		}
+	};
 
 /**
- * Get a single resource
- */
-export const show = async (req: Request, res: Response) => {
-}
-
-/**
- * Create a resource
+ * Create store photo
  */
 export const store = async (req: Request, res: Response) => {
 	const validationErrors = validationResult(req)
