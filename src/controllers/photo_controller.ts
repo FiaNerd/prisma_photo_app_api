@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import { createUser, getUserByEmail } from '../services/user_service'
+import { createPhoto } from '../services/user_service'
 
 export const index = async (req: Request, res: Response) => {
 
@@ -26,9 +26,23 @@ export const store = async (req: Request, res: Response) => {
 			data: validationErrors.array(),
 		})
 	}
+
 	const validatedData = matchedData(req)
 
 	try {
+		const photo = await createPhoto({
+			title:      validatedData.title,
+			url:   validatedData.url,
+			comment: validatedData.comment,
+			// user_id:  validatedData.user_id,
+		})
+
+		return res.status(201).send({
+			status: "success",
+			data: {
+			  photo: photo
+			}
+		  })
 
 	} catch (err) {
 		return res.status(500).send({
