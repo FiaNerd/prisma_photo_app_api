@@ -12,12 +12,12 @@ router.get('/', index)
 /**
  * GET /resource/:resourceId
  */
-router.get('/:resourceId', show)
+router.get('/:photoId', show)
 
 /**
  * POST /resource
  */
-router.post('/',  store)
+router.post('/', store)
 
 /**
  * PATCH /resource/:resourceId
