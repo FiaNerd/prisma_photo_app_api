@@ -11,8 +11,7 @@
 		url: string,
 		comment: string,
 		user_id: number,
- }
-
+ 	}
 
 	export type JwtPayload = {
 		sub: number,

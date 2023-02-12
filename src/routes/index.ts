@@ -26,7 +26,6 @@ router.use('/register', registerValidationRules, registerUser)
 /*
 	POST /login
 */
-// router.use('/login', loginUser)
 router.use('/login', loginUser)
 
 /*
