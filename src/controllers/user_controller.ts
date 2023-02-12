@@ -72,9 +72,8 @@ export const registerUser = async (req: Request, res: Response) => {
 	const hashedPassword = await bcrypt.hash(validatedData.password, Number(process.env.SALT_ROUNDS) || 10)
 	console.log("Hashed password:", hashedPassword)
 
-	// Replace password with hashed password
-
 	validatedData.password = hashedPassword
+
 	try {
 		const register = await createUser({
 			email:      validatedData.email,
