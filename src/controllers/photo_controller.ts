@@ -1,7 +1,6 @@
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import { title } from 'process'
 import { createPhoto, getPhotos, getPhotoById, updatePhoto } from '../services/photo_service'
 
 const debug = Debug('prisma_photo_app_api:photo_contoller')
