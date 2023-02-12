@@ -3,6 +3,7 @@ import { registerValidationRules } from '../validations/user_validation'
 import { photoValidationRules } from '../validations/photo_validation'
 import { registerUser, loginUser } from '../controllers/user_controller'
 import photos from './photo'
+import albums from './album'
 import { validateToken } from '../middlewares/auth/jwt'
 
 
@@ -32,5 +33,10 @@ router.use('/login', loginUser)
 	POST /photos
 */
 router.use('/photos', photoValidationRules, validateToken, photos)
+
+/*
+	POST /albums
+*/
+router.use('/albums', albums)
 
 export default router

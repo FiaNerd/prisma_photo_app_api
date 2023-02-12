@@ -20,6 +20,7 @@ const debug = Debug('prisma_photo_app_api:photo_contoller')
 		try {
 		const photos = await getPhotos(user_id);
 
+		// TODO: Check if you really dont need this map() function. If not, delete it!
 		// const filteredPhotos = photos.map(photo => ({
 		// 	id: photo.id,
 		// 	title: photo.title,
