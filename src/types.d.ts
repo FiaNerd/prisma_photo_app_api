@@ -1,3 +1,5 @@
+
+	// USER
 	export type CreateUserData = {
 		email:      string,
 		password:   string,
@@ -6,6 +8,7 @@
 	}
 
 
+	// PHOTO
 	export type CreatePhoto = {
 		title: string,
 		url: string,
@@ -13,13 +16,19 @@
 		user_id: number,
  	}
 
-
 	export type UpdatePhotoData = {
 		title?: string,
 		comment?: string,
 	}
 
 
+	// ALBUMS
+	export type CreateAlbumData = {
+		title: string,
+		user_id: number,
+	}
+
+	//JWT
 	export type JwtPayload = {
 		sub: number,
 		name: string,
