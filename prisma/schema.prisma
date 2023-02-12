@@ -17,16 +17,6 @@ model User {
   photos     Photo[]
 }
 
-model Album {
-  id      Int     @id @default(autoincrement()) @db.UnsignedInt
-  title   String  @db.VarChar(100)
-  photos  Photo[]
-  user    User    @relation(fields: [user_id], references: [id])
-  user_id Int     @db.UnsignedInt
-
-  @@index([user_id], map: "Album_user_id_fkey")
-}
-
 model Photo {
   id      Int     @id @default(autoincrement()) @db.UnsignedInt
   title   String  @db.VarChar(100)
@@ -37,4 +27,14 @@ model Photo {
   user_id Int     @db.UnsignedInt
 
   @@index([user_id], map: "Photo_user_id_fkey")
+}
+
+model Album {
+  id      Int     @id @default(autoincrement()) @db.UnsignedInt
+  title   String  @db.VarChar(100)
+  photos  Photo[]
+  user    User    @relation(fields: [user_id], references: [id])
+  user_id Int     @db.UnsignedInt
+
+  @@index([user_id], map: "Album_user_id_fkey")
 }

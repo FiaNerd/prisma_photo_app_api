@@ -1,6 +1,3 @@
-/**
- * Controller Template
- */
 import Debug from 'debug'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -66,11 +63,8 @@ export const registerUser = async (req: Request, res: Response) => {
 		})
 	}
 	const validatedData = matchedData(req)
-	console.log("req body", req.body);
-	console.log("validate data", validatedData);
 
 	const hashedPassword = await bcrypt.hash(validatedData.password, Number(process.env.SALT_ROUNDS) || 10)
-	console.log("Hashed password:", hashedPassword)
 
 	validatedData.password = hashedPassword
 
