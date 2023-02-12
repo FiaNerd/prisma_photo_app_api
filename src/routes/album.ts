@@ -2,16 +2,21 @@
  * Router Template
  */
 import express from 'express'
-import {  index, store  } from '../controllers/album_controller'
+import {  index, show, store  } from '../controllers/album_controller'
 const router = express.Router()
 
 /**
- * POST /albums
+   GET /albums
  */
 router.get('/', index)
 
 /**
- * POST /albums
+   GET /albums/:albumId
+ */
+router.get('/:albumId', show)
+
+/**
+   POST /albums
  */
 router.post('/', store)
 

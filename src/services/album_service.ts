@@ -12,9 +12,12 @@ import { CreateAlbumData } from '../types'
 
 
 	export const getAlbumById = (albumId: number) =>{
-		return prisma.album.findUniqueOrThrow({
+		return prisma.album.findUnique({
 			where: {
 				id: albumId
+			},
+			include: {
+				photos: true
 			}
 		})
 	}
