@@ -1,10 +1,9 @@
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-
 import { createAlbum } from '../services/album_service'
 
-const debug = Debug('prisma_photo_app_api:photo_contoller')
+const debug = Debug('prisma_photo_app_api:album_contoller')
 
 
 /**
@@ -44,7 +43,6 @@ export const store = async (req: Request, res: Response) => {
 		  });
 
 	} catch (err) {
-
 		return res.status(500).send({
 			staus: 'error',
 			message: 'Sorry, the server is down'
