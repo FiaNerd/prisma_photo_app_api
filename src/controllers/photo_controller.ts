@@ -19,9 +19,16 @@ export const index = async (req: Request, res: Response) => {
 	try {
 	  const photos = await getPhotos(user_id);
 
+	  const filteredPhotos = photos.map(photo => ({
+		id: photo.id,
+		title: photo.title,
+		url: photo.url,
+		comment: photo.comment
+	  }));
+
 	  return res.status(200).send({
 		status: "success",
-		data: photos
+		data: filteredPhotos
 	  });
 
 	} catch (err) {
@@ -38,8 +45,6 @@ export const index = async (req: Request, res: Response) => {
 		const photoId = Number(req.params.photoId)
 
 		const user_id = req.token ? req.token.user_id : NaN;
-		console.log("user_id", user_id);
-		console.log("req token", req.token);
 
 		if (!req.token || isNaN(req.token.user_id)) {
 		return res.status(401).send({
@@ -67,8 +72,13 @@ export const index = async (req: Request, res: Response) => {
 
 		return res.status(200).send({
 			status: "success",
-			data: photo
-		});
+			data: {
+			  id: photo.id,
+			  title: photo.title,
+			  url: photo.url,
+			  comment: photo.comment
+			}
+		  });
 
 		} catch (err) {
 		return res.status(500).send({
