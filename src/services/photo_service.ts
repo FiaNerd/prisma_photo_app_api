@@ -12,7 +12,6 @@ export const getPhotos = (user_id: number) => {
 
 
 export const getPhotoById = async (photoId: number) => {
-
 	return await prisma.photo.findUnique({
 		where: {
 		  id: photoId
