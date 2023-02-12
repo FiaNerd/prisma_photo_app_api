@@ -1,6 +1,4 @@
 import Debug from 'debug'
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
 import { createPhoto } from '../services/photo_service'
@@ -31,20 +29,28 @@ export const store = async (req: Request, res: Response) => {
 
 	const validatedData = matchedData(req)
 
-	try {
-		const photo = await createPhoto({
-			title:   validatedData.title,
-			url:     validatedData.url,
-			comment: validatedData.comment,
-			user_id: Number(validatedData.user_id),
-		})
+	const user_id = req.token ? req.token.user_id : NaN;
 
-		return res.status(201).send({
+	if (!req.token || isNaN(req.token.user_id)) {
+		return res.status(401).send({
+		  status: "fail",
+		  message: "User is not authenticated"
+		});
+	  }
+
+
+	try {
+		  const photo = await createPhoto({
+			title: validatedData.title,
+			url: validatedData.url,
+			comment: validatedData.comment,
+			user_id,
+		  });
+
+		  return res.status(201).send({
 			status: "success",
-			data: {
-			  photo: photo
-			}
-		  })
+			data: photo
+		  });
 
 	} catch (err) {
 		debug("Error thrown when finding book with id %o: %o",)
