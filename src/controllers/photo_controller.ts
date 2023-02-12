@@ -1,45 +1,47 @@
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import { createPhoto, getPhotos, getPhotoById } from '../services/photo_service'
+import { title } from 'process'
+import { createPhoto, getPhotos, getPhotoById, updatePhoto } from '../services/photo_service'
 
 const debug = Debug('prisma_photo_app_api:photo_contoller')
 
-export const index = async (req: Request, res: Response) => {
+	export const index = async (req: Request, res: Response) => {
 
-	const user_id = req.token ? req.token.user_id : NaN;
+		const user_id = req.token ? req.token.user_id : NaN;
 
-	if (!req.token || isNaN(req.token.user_id)) {
-	  return res.status(401).send({
-		status: "fail",
-		message: "User is not authenticated"
-	  });
+		if (!req.token || isNaN(req.token.user_id)) {
+		return res.status(401).send({
+			status: "fail",
+			message: "User is not authenticated"
+		});
+		}
+
+		try {
+		const photos = await getPhotos(user_id);
+
+		// const filteredPhotos = photos.map(photo => ({
+		// 	id: photo.id,
+		// 	title: photo.title,
+		// 	url: photo.url,
+		// 	comment: photo.comment
+		// }));
+
+		return res.status(200).send({
+			status: "success",
+			data: photos
+		});
+
+		} catch (err) {
+		console.error("Error thrown when finding photos: ", err)
+
+		return res.status(500).send({
+			status: 'error',
+			message: 'Could not retrieve photos'
+		})
+		}
 	}
 
-	try {
-	  const photos = await getPhotos(user_id);
-
-	  const filteredPhotos = photos.map(photo => ({
-		id: photo.id,
-		title: photo.title,
-		url: photo.url,
-		comment: photo.comment
-	  }));
-
-	  return res.status(200).send({
-		status: "success",
-		data: filteredPhotos
-	  });
-
-	} catch (err) {
-	  console.error("Error thrown when finding photos: ", err)
-
-	  return res.status(500).send({
-		status: 'error',
-		message: 'Could not retrieve photos'
-	  })
-	}
-  }
 	export const show = async (req: Request, res: Response) => {
 
 		const photoId = Number(req.params.photoId)
@@ -92,7 +94,9 @@ export const index = async (req: Request, res: Response) => {
  * Create store photo
  */
 export const store = async (req: Request, res: Response) => {
+
 	const validationErrors = validationResult(req)
+
 	if (!validationErrors.isEmpty()) {
 		return res.status(400).send({
 			status: "fail",
@@ -140,6 +144,55 @@ export const store = async (req: Request, res: Response) => {
  * Update a resource
  */
 export const update = async (req: Request, res: Response) => {
+
+	const photoId = Number(req.params.photoId)
+
+	// const validationErrors = validationResult(req)
+	// if (!validationErrors.isEmpty()) {
+	// 	return res.status(400).send({
+	// 		status: "fail",
+	// 		data: validationErrors.array(),
+	// 	})
+	// }
+
+	const user_id = req.token ? req.token.user_id : NaN;
+
+	if (!req.token || isNaN(req.token.user_id)) {
+	  return res.status(401).send({
+		status: "fail",
+		message: "User is not authenticated"
+	  });
+	}
+	const validatedData = matchedData(req)
+
+	try {
+	  const patchPhoto = await updatePhoto(photoId, validatedData);
+
+	  if (patchPhoto.user_id !== user_id) {
+		return res.status(401).send({
+		  status: "fail",
+		  message: "User is not authorized to update this photo"
+		});
+	  }
+
+	  return res.status(200).send({
+		status: "success",
+		data: {
+			id: photoId,
+			title: patchPhoto.title,
+			comment: patchPhoto.comment,
+			user_id
+		}
+	  });
+
+	} catch (err) {
+	  console.error("Error thrown when finding photos: ", err)
+
+	  return res.status(500).send({
+		status: 'error',
+		message: 'Could not retrieve photos'
+	  })
+	}
 }
 
 /**
