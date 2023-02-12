@@ -1,6 +1,7 @@
 import express from 'express'
 import { index, show, store, update, destroy } from '../controllers/photo_controller'
 
+
 const router = express.Router()
 
 /**
@@ -16,7 +17,7 @@ router.get('/:resourceId', show)
 /**
  * POST /resource
  */
-router.post('/', store)
+router.post('/',  store)
 
 /**
  * PATCH /resource/:resourceId

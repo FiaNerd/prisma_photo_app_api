@@ -1,7 +1,6 @@
 import Debug from 'debug'
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
-// import { JwtPayload } from '../../types'
 import { JwtPayload } from '../../types'
 
 const debug = Debug('prisma-books:jwt')
