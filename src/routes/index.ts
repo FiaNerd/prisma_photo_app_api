@@ -1,6 +1,7 @@
 import { registerValidationRules } from '../validations/user_validation'
 import express from "express"
 import { registerUser, loginUser } from '../controllers/user_controller'
+import { validateToken } from '../middlewares/auth/jwt'
 
 // instantiate a new router
 const router = express.Router()
@@ -14,7 +15,6 @@ router.get('/', (req, res) => {
 	})
 })
 
-
 /*
 	POST /register
 */
@@ -23,6 +23,7 @@ router.use('/register', registerValidationRules, registerUser)
 /*
 	POST /login
 */
+// router.use('/login', validateToken, loginUser)
 router.use('/login', loginUser)
 
 export default router
