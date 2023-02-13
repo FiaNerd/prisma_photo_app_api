@@ -21,6 +21,6 @@ router.get('/:albumId', show)
 router.post('/', store)
 
 // PATCH /albums/:albumId
-router.post('/:albumsId', update)
+router.post('/:albumId', update)
 
 export default router
