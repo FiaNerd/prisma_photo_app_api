@@ -28,6 +28,10 @@
 		user_id: number,
 	}
 
+	export type UpdateAlbumData = {
+		title?: string,
+	}
+
 	//JWT
 	export type JwtPayload = {
 		sub: number,

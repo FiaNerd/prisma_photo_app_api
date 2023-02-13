@@ -1,7 +1,7 @@
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import {  getAlbums, getAlbumById, createAlbum } from '../services/album_service'
+import {  getAlbums, getAlbumById, createAlbum, updateAlbum } from '../services/album_service'
 
 const debug = Debug('prisma_photo_app_api:album_contoller')
 
@@ -123,5 +123,47 @@ const debug = Debug('prisma_photo_app_api:album_contoller')
 				staus: 'error',
 				message: 'Sorry, the server is down'
 			})
+		}
+	}
+
+
+	/*
+		PATCH /albums/:albumId
+	*/
+	export const update = async (req: Request, res: Response) => {
+
+		const albumId = Number(req.params.albumId)
+
+		const user_id = req.token ? req.token.user_id : NaN;
+
+		if (!req.token || isNaN(req.token.user_id)) {
+		  return res.status(401).send({
+			status: "fail",
+			message: "User is not authenticated"
+		  });
+		}
+		const validatedData = matchedData(req)
+
+		try {
+			const patchAlbum = await updateAlbum(albumId, validatedData);
+
+	  if (patchAlbum.user_id !== user_id) {
+		return res.status(401).send({
+		  status: "fail",
+		  message: "User is not authorized to update this photo"
+		});
+	  }
+
+	  return res.status(200).send({
+		status: "success",
+		data: {
+			id: albumId,
+			title: patchAlbum.title,
+			user_id
+		}
+	  });
+
+		} catch (err) {
+
 		}
 	}

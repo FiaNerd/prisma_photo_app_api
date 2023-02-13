@@ -1,5 +1,5 @@
 import prisma from '../prisma'
-import { CreateAlbumData } from '../types'
+import { CreateAlbumData, UpdateAlbumData } from '../types'
 
 
 	export const getAlbums = (user_id: number) => {
@@ -39,3 +39,13 @@ import { CreateAlbumData } from '../types'
 		});
 	};
 
+
+	export const updateAlbum = async (albumId: number, albumUpdate: UpdateAlbumData) => {
+
+		return await prisma.album.update({
+			where: {
+				id: albumId,
+			},
+			data: albumUpdate
+		})
+	}
