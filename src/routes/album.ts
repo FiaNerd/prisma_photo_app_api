@@ -1,8 +1,6 @@
-/**
- * Router Template
- */
 import express from 'express'
 import {  index, show, store, addPhotoToAlbum } from '../controllers/album_controller'
+
 const router = express.Router()
 
 /**
@@ -28,5 +26,6 @@ router.post('/', store)
 	POSTS /albums/:albumId/photos
 */
 router.post('/:albumId/photos', addPhotoToAlbum)
+
 
 export default router

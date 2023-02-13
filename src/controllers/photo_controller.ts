@@ -139,14 +139,6 @@ export const update = async (req: Request, res: Response) => {
 
 	const photoId = Number(req.params.photoId)
 
-	// const validationErrors = validationResult(req)
-	// if (!validationErrors.isEmpty()) {
-	// 	return res.status(400).send({
-	// 		status: "fail",
-	// 		data: validationErrors.array(),
-	// 	})
-	// }
-
 	const user_id = req.token ? req.token.user_id : NaN;
 
 	if (!req.token || isNaN(req.token.user_id)) {
@@ -178,11 +170,9 @@ export const update = async (req: Request, res: Response) => {
 	  });
 
 	} catch (err) {
-	  console.error("Error thrown when finding photos: ", err)
-
 	  return res.status(500).send({
 		status: 'error',
-		message: 'Could not retrieve photos'
+		message: 'The server is down. Please try again'
 	  })
 	}
 }

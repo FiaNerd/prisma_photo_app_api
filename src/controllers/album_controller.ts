@@ -1,7 +1,8 @@
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import {  getAlbums, getAlbumById, createAlbum, connectPhotoToAlbum } from '../services/album_service'
+import {  getAlbums, getAlbumById, createAlbum, connectPhotosToAlbum } from '../services/album_service'
+import prisma from '../prisma'
 
 const debug = Debug('prisma_photo_app_api:album_contoller')
 
@@ -82,9 +83,7 @@ const debug = Debug('prisma_photo_app_api:album_contoller')
 	};
 
 
-	/**
-	 * Create store album
-	 */
+
 	export const store = async (req: Request, res: Response) => {
 
 		const validationErrors = validationResult(req)
@@ -127,6 +126,45 @@ const debug = Debug('prisma_photo_app_api:album_contoller')
 	}
 
 
-	export const addPhotoToAlbum = async (req: Request, res: Response) => {
 
-	}
+	export const addPhotoToAlbum = async (req: Request, res: Response) => {
+		const photoId = req.body.photo_id
+		// const photosId: number[] = req.body.photo_id
+		const albumId = Number(req.params.albumId)
+
+		const user_id = req.token ? req.token.user_id : NaN;
+
+		if (!req.token || isNaN(req.token.user_id)) {
+		  return res.status(401).send({
+			status: "fail",
+			message: "User is not authenticated"
+		  });
+		}
+
+		try {
+		  const updateAlbum = await connectPhotosToAlbum(albumId, photoId)
+		//   const updateAlbum = await connectPhotosToAlbum(albumId,[ photoId ]);
+
+		  if (updateAlbum.user_id !== user_id) {
+			return res.status(401).send({
+			  status: "fail",
+			  message: "User is not authorized to update this photo"
+			});
+		  }
+
+		  return res.status(200).send({
+			status: "success",
+			data: {
+			  product_id: photoId,
+			}
+		  });
+
+		} catch (err) {
+			debug("Error thrown when adding book %o to a author %o: %o", photoId, user_id, err )
+
+		  return res.status(500).send({
+			status: 'error',
+			message: 'The server is down. Please try again'
+		  })
+		}
+	  }
