@@ -125,3 +125,15 @@ const debug = Debug('prisma_photo_app_api:album_contoller')
 			})
 		}
 	}
+
+
+	/*
+		PATCH /albums/:albumId
+	*/
+	export const update = (req: Request	, res: Response) => {
+		try {
+
+		} catch (err) {
+
+		}
+	}
