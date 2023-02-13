@@ -2,8 +2,6 @@ import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
 import {  getAlbums, getAlbumById, createAlbum, updateAlbum, connectPhotosToAlbum } from '../services/album_service'
-import prisma from '../prisma'
-
 
 const debug = Debug('prisma_photo_app_api:album_contoller')
 

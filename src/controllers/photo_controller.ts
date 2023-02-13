@@ -1,7 +1,7 @@
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import { createPhoto, getPhotos, getPhotoById, updatePhoto } from '../services/photo_service'
+import { createPhoto, getPhotos, getPhotoById, updatePhoto,  } from '../services/photo_service'
 
 const debug = Debug('prisma_photo_app_api:photo_contoller')
 
@@ -177,8 +177,3 @@ export const update = async (req: Request, res: Response) => {
 	}
 }
 
-/**
- * Delete a resource
- */
-export const destroy = async (req: Request, res: Response) => {
-}
