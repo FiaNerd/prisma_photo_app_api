@@ -5,6 +5,9 @@ import { createPhoto, getPhotos, getPhotoById, updatePhoto } from '../services/p
 
 const debug = Debug('prisma_photo_app_api:photo_contoller')
 
+/*
+	Get all /photos
+*/
 	export const index = async (req: Request, res: Response) => {
 
 		const user_id = req.token ? req.token.user_id : NaN;
@@ -34,6 +37,10 @@ const debug = Debug('prisma_photo_app_api:photo_contoller')
 		}
 	}
 
+
+/*
+	Get /photos/:photoId
+ */
 	export const show = async (req: Request, res: Response) => {
 
 		const photoId = Number(req.params.photoId)
@@ -83,7 +90,7 @@ const debug = Debug('prisma_photo_app_api:photo_contoller')
 	};
 
 /**
- * Create store photo
+ 	 Create /photos
  */
 export const store = async (req: Request, res: Response) => {
 
@@ -133,7 +140,7 @@ export const store = async (req: Request, res: Response) => {
 }
 
 /**
- * Update a resource
+ * Update /photos/:photoId
  */
 export const update = async (req: Request, res: Response) => {
 
@@ -178,7 +185,7 @@ export const update = async (req: Request, res: Response) => {
 }
 
 /**
- * Delete a resource
+ * Delete /photos/:photoId
  */
 export const destroy = async (req: Request, res: Response) => {
 }
