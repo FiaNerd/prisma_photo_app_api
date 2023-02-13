@@ -52,11 +52,11 @@ import { CreatePhoto, UpdatePhotoData } from '../types'
 	};
 
 
-	export const deletePhoto = async (photoId : number) => {
-
-		return prisma.photo.delete({
-			where:{
-				id: photoId
-			}
+	export const deletePhoto = async (photoId: number) => {
+		return await prisma.photo.delete({
+		  where: {
+			id: photoId
+		  }
 		})
-	}
+	  }
+

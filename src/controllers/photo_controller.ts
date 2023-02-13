@@ -1,7 +1,7 @@
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import { createPhoto, getPhotos, getPhotoById, updatePhoto,  } from '../services/photo_service'
+import { createPhoto, getPhotos, getPhotoById, updatePhoto, deletePhoto } from '../services/photo_service'
 
 const debug = Debug('prisma_photo_app_api:photo_contoller')
 
@@ -177,3 +177,49 @@ export const update = async (req: Request, res: Response) => {
 	}
 }
 
+/**
+ * Delete a resource
+ */
+export const destroy = async (req: Request, res: Response) => {
+
+	const photoId = Number(req.params.photoId)
+
+	const user_id = req.token ? req.token.user_id : NaN;
+
+	if (!req.token || isNaN(req.token.user_id)) {
+	  return res.status(401).send({
+		status: "fail",
+		message: "User is not authenticated"
+	  });
+	}
+	const validatedData = matchedData(req)
+
+	try {
+		const destroyPhoto = await deletePhoto(photoId)
+
+		if (destroyPhoto.user_id !== user_id) {
+		  return res.status(401).send({
+			status: "fail",
+			message: "User is not authorized to delet this photo"
+		  });
+		}
+
+		if (!destroyPhoto) {
+			return res.status(404).send({
+				status: "fail",
+				message: "Photo not found"
+			});
+		}
+
+	  return res.status(200).send({
+		status: "success",
+		data: null,
+	  });
+
+	} catch (err) {
+	  return res.status(500).send({
+		status: 'error',
+		message: 'The server is down. Please try again'
+	  })
+	}
+}
