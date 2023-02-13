@@ -139,14 +139,6 @@ export const update = async (req: Request, res: Response) => {
 
 	const photoId = Number(req.params.photoId)
 
-	// const validationErrors = validationResult(req)
-	// if (!validationErrors.isEmpty()) {
-	// 	return res.status(400).send({
-	// 		status: "fail",
-	// 		data: validationErrors.array(),
-	// 	})
-	// }
-
 	const user_id = req.token ? req.token.user_id : NaN;
 
 	if (!req.token || isNaN(req.token.user_id)) {

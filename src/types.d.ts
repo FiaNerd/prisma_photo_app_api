@@ -29,8 +29,7 @@
 	}
 
 	export type UpdateAlbumData = {
-		title: string,
-		user_id: number,
+		title?: string,
 	}
 
 	//JWT
