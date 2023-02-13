@@ -1,5 +1,6 @@
 import express from 'express'
-import {  index, show, store, addPhotoToAlbum } from '../controllers/album_controller'
+
+import {  index, show, store, update, addPhotoToAlbum  } from '../controllers/album_controller'
 
 const router = express.Router()
 
@@ -18,14 +19,16 @@ router.get('/:albumId', show)
  */
 router.post('/', store)
 
+
 /*
 	PATCH /albums/:albumId
 */
-
+router.patch('/:albumId', update)
 /*
 	POSTS /albums/:albumId/photos
 */
 router.post('/:albumId/photos', addPhotoToAlbum)
+
 
 
 export default router

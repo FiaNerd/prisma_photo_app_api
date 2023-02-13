@@ -1,5 +1,5 @@
 import prisma from '../prisma'
-import { CreateAlbumData, CreatePhoto } from '../types'
+import { CreateAlbumData,  UpdateAlbumData } from '../types'
 
 import Debug from 'debug'
 const debug = Debug('prisma-books:album_service')
@@ -43,6 +43,15 @@ const debug = Debug('prisma-books:album_service')
 		});
 	};
 
+	export const updateAlbum = async (albumId: number, albumUpdate: UpdateAlbumData) => {
+
+		return await prisma.album.update({
+			where: {
+				id: albumId,
+			},
+			data: albumUpdate
+		})
+	}
 
 
 	export const connectPhotosToAlbum = async (albumId: number, photoId: number) => {
@@ -68,41 +77,3 @@ const debug = Debug('prisma-books:album_service')
 
 
 
-
-
-	// export const connectPhotosToAlbum = async (albumId: number, photosId: number[]) => {
-	// 	return await prisma.album.update({
-	// 	  where: {
-	// 		id: albumId
-	// 	},
-	// 	  data: {
-	// 		photos: {
-	// 		  connect: photosId.map(photoId => ({
-	// 			id: photoId
-	// 		}))
-	// 		}
-	// 	  }
-	// 	});
-	//   };
-
-
-
-
-
-
-	// export const connectPhotoToAlbum = async (photoId: number, albumId: number) => {
-	// 	return await prisma.album.update({
-	// 	  where: {
-	// 		id: albumId
-	// 	  },
-	// 	  data: {
-	// 		photos: {
-	// 		  connect: [
-	// 			{
-	// 			  id: photoId
-	// 			}
-	// 		  ]
-	// 		}
-	// 	  }
-	// 	});
-	//   };

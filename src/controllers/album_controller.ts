@@ -1,8 +1,9 @@
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import {  getAlbums, getAlbumById, createAlbum, connectPhotosToAlbum } from '../services/album_service'
+import {  getAlbums, getAlbumById, createAlbum, updateAlbum, connectPhotosToAlbum } from '../services/album_service'
 import prisma from '../prisma'
+
 
 const debug = Debug('prisma_photo_app_api:album_contoller')
 
@@ -126,10 +127,11 @@ const debug = Debug('prisma_photo_app_api:album_contoller')
 	}
 
 
+	/*
+		PATCH /albums/:albumId
+	*/
+	export const update = async (req: Request, res: Response) => {
 
-	export const addPhotoToAlbum = async (req: Request, res: Response) => {
-		const photoId = req.body.photo_id
-		// const photosId: number[] = req.body.photo_id
 		const albumId = Number(req.params.albumId)
 
 		const user_id = req.token ? req.token.user_id : NaN;
@@ -140,31 +142,71 @@ const debug = Debug('prisma_photo_app_api:album_contoller')
 			message: "User is not authenticated"
 		  });
 		}
+		const validatedData = matchedData(req)
 
 		try {
-		  const updateAlbum = await connectPhotosToAlbum(albumId, photoId)
-		//   const updateAlbum = await connectPhotosToAlbum(albumId,[ photoId ]);
+			const patchAlbum = await updateAlbum(albumId, validatedData);
 
-		  if (updateAlbum.user_id !== user_id) {
+	  if (patchAlbum.user_id !== user_id) {
+		return res.status(401).send({
+		  status: "fail",
+		  message: "User is not authorized to update this photo"
+		});
+	  }
+
+	  return res.status(200).send({
+		status: "success",
+		data: {
+			id: albumId,
+			title: patchAlbum.title,
+			user_id
+		}
+	  });
+
+		} catch (err) {
+			return res.status(500).send({
+				staus: 'error',
+				message: 'Sorry, the server is down'
+			})
+		}
+	}
+
+
+	  export const addPhotoToAlbum = async (req: Request, res: Response) => {
+
+		const photoId = req.body.photo_id
+		const albumId = Number(req.params.albumId)
+		// const photosId: number[] = req.body.photo_id
+
+		const user_id = req.token ? req.token.user_id : NaN;
+
+		  if (!req.token || isNaN(req.token.user_id)) {
 			return res.status(401).send({
 			  status: "fail",
-			  message: "User is not authorized to update this photo"
+			  message: "User is not authenticated"
 			});
 		  }
 
-		  return res.status(200).send({
-			status: "success",
-			data: {
-			  product_id: photoId,
-			}
-		  });
+
+		try {
+			const updateAlbum = await connectPhotosToAlbum(albumId, photoId)
+
+	  if (updateAlbum.user_id !== user_id) {
+		return res.status(401).send({
+		  status: "fail",
+		  message: "User is not authorized to update this photo"
+		});
+	  }
+
+	  return res.status(200).send({
+		status: "success",
+		data: null
+	  });
 
 		} catch (err) {
-			debug("Error thrown when adding book %o to a author %o: %o", photoId, user_id, err )
-
-		  return res.status(500).send({
-			status: 'error',
-			message: 'The server is down. Please try again'
-		  })
+			return res.status(500).send({
+				staus: 'error',
+				message: 'Sorry, the server is down'
+			})
 		}
-	  }
+	}
