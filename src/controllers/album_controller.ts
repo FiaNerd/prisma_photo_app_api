@@ -2,8 +2,6 @@ import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
 import {  getAlbums, getAlbumById, createAlbum, updateAlbum, connectPhotosToAlbum } from '../services/album_service'
-import prisma from '../prisma'
-
 
 const debug = Debug('prisma_photo_app_api:album_contoller')
 
@@ -191,17 +189,25 @@ const debug = Debug('prisma_photo_app_api:album_contoller')
 		try {
 			const updateAlbum = await connectPhotosToAlbum(albumId, photoId)
 
-	  if (updateAlbum.user_id !== user_id) {
-		return res.status(401).send({
-		  status: "fail",
-		  message: "User is not authorized to update this photo"
-		});
-	  }
+			//TODO: SEE if you can make this work if user add a photo to album when the user auth to do it
+			if (!updateAlbum) {
+				return res.status(404).send({
+				status: "fail",
+				message: "Photo not found"
+				});
+			}
 
-	  return res.status(200).send({
-		status: "success",
-		data: null
-	  });
+			if (updateAlbum.user_id !== user_id) {
+				return res.status(401).send({
+				status: "fail",
+				message: "User is not authorized to update this photo"
+				});
+			}
+
+			return res.status(200).send({
+				status: "success",
+				data: null
+			});
 
 		} catch (err) {
 			return res.status(500).send({
