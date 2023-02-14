@@ -26,8 +26,8 @@ router.patch('/:photoId', update)
 // router.patch('/:photoId', [], update)
 
 /**
- * DELETE /resource/:resourceId
+ * DELETE /photos/:photoId
  */
-router.delete('/:resourceId', destroy)
+router.delete('/:photoId', destroy)
 
 export default router

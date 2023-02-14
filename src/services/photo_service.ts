@@ -59,3 +59,4 @@ import { CreatePhoto, UpdatePhotoData } from '../types'
 		  }
 		})
 	  }
+
