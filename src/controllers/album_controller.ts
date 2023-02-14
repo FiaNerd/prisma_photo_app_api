@@ -1,7 +1,7 @@
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import {  getAlbums, getAlbumById, createAlbum, updateAlbum, connectPhotosToAlbum } from '../services/album_service'
+import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum } from '../services/album_service'
 import prisma from '../prisma'
 
 
@@ -189,7 +189,7 @@ const debug = Debug('prisma_photo_app_api:album_contoller')
 
 
 		try {
-			const updateAlbum = await connectPhotosToAlbum(albumId, photoId)
+			const updateAlbum = await createPhotosToAlbum(albumId, photoId)
 
 	  if (updateAlbum.user_id !== user_id) {
 		return res.status(401).send({

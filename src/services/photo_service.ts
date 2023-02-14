@@ -50,3 +50,12 @@ import { CreatePhoto, UpdatePhotoData } from '../types'
 		throw error;
 		}
 	};
+
+
+	export const deletePhoto = async (photoId: number) => {
+		return await prisma.photo.delete({
+		  where: {
+			id: photoId
+		  }
+		})
+	  }
