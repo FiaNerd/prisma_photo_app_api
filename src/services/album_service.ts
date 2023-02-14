@@ -54,26 +54,20 @@ const debug = Debug('prisma-books:album_service')
 	}
 
 
-	export const connectPhotosToAlbum = async (albumId: number, photoId: number) => {
+	export const createPhotosToAlbum = async (albumId: number, photoIds: number[]) => {
 
 		return await prisma.album.update({
-			where: {
-				id: albumId,
-			},
-			data: {
-				photos: {
-					connect: {
-						id:  photoId,
-					}
-				}
-			},
-			include: {
-				photos: true,
+		  where: {
+			id: albumId,
+		  },
+		  data: {
+			photos: {
+			  connect: photoIds.map(id => ({ id })),
 			}
-		})
-		}
-
-
-
-
+		  },
+		  include: {
+			photos: true,
+		  }
+		});
+	  };
 
