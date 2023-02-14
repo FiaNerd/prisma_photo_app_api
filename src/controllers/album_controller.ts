@@ -3,7 +3,6 @@
 	import { matchedData, validationResult } from 'express-validator'
 	import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum } from '../services/album_service'
 	import {  getPhotoById } from '../services/photo_service'
-	import prisma from '../prisma'
 
 
 	const debug = Debug('prisma_photo_app_api:album_contoller')
@@ -176,7 +175,6 @@
 		export const addPhotoToAlbum = async (req: Request, res: Response) => {
 
 			const photoIds: number[] = req.body.photo_id
-			// const photoId = Number(req.params.photo_id)
 			const albumId = Number(req.params.albumId)
 
 			const user_id = req.token ? req.token.user_id : NaN;
@@ -195,6 +193,7 @@
 					message: `There is no album with that id: ${albumId}`
 				});
 			}
+
 			if (album.user_id !== user_id) {
 				return res.status(401).send({
 					status: "fail",
@@ -203,9 +202,17 @@
 			}
 
 
+
 			for (const photoId of photoIds) {
 
 				const photo = await getPhotoById(photoId);
+
+				if (!photo) {
+					return res.status(400).send({
+						status: "fail",
+						message: `There is no photo with that id: ${photoId}`
+					});
+				}
 
 				if (!photo) {
 					return res.status(400).send({
@@ -222,14 +229,21 @@
 				}
 			}
 
+			if (photoIds.length === 0) {
+				return res.status(200).send({
+					status: "fail",
+					message: "You have to add a photo"
+			 	});
+			  }
+
 
 			try {
 				 await createPhotosToAlbum(albumId, photoIds)
 
-				return res.status(200).send({
+				 return res.status(200).send({
 					status: "success",
 					data: null
-				});
+			 	});
 
 			} catch (err) {
 				debug("Error thrown when adding photo %o to a album %o: %o", updateAlbum)

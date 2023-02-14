@@ -15,6 +15,7 @@ export const photoValidationRules = [
 		.withMessage('Inavlid, must be an url'),
 
 	body('comment')
+	    .optional()
 		.isString()
 		.withMessage('Inavlid, must be a string')
 		.bail()
