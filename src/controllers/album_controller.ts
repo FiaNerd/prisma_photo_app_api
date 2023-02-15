@@ -148,12 +148,12 @@
 			try {
 				const patchAlbum = await updateAlbum(albumId, validatedData);
 
-		if (patchAlbum.user_id !== user_id) {
-			return res.status(401).send({
-			status: "fail",
-			message: "User is not authorized to update this photo"
-			});
-		}
+				if (patchAlbum.user_id !== user_id) {
+					return res.status(401).send({
+					status: "fail",
+					message: "User is not authorized to update this photo"
+					});
+			}
 
 		return res.status(200).send({
 			status: "success",
@@ -188,6 +188,7 @@
 			}
 
 			const album = await getAlbumById(albumId);
+
 			if (!album) {
 				return res.status(400).send({
 					status: "fail",
@@ -203,9 +204,7 @@
 			}
 
 
-
 			for (const photoId of photoIds) {
-
 				const photo = await getPhotoById(photoId);
 
 				if (!photo) {
