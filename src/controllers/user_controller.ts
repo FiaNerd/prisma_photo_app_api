@@ -8,6 +8,49 @@ import { JwtPayload } from '../types'
 // Create a new debug instance
 const debug = Debug('prisma-boilerplate:I_AM_LAZY_AND_HAVE_NOT_CHANGED_THIS_😛')
 
+
+export const registerUser = async (req: Request, res: Response) => {
+
+	const validationErrors = validationResult(req)
+	if (!validationErrors.isEmpty()) {
+		return res.status(400).send({
+			status: "fail",
+			data: validationErrors.array(),
+		})
+	}
+	const validatedData = matchedData(req)
+
+	const hashedPassword = await bcrypt.hash(validatedData.password, Number(process.env.SALT_ROUNDS) || 10)
+
+	validatedData.password = hashedPassword
+
+	try {
+		const register = await createUser({
+			email:      validatedData.email,
+			password:   validatedData.password,
+			first_name: validatedData.first_name,
+			last_name:  validatedData.last_name,
+		})
+
+		return res.status(201).send({
+			status: "success",
+			data: {
+			  email: register.email,
+			  first_name: register.first_name,
+			  last_name: register.last_name
+			}
+		  })
+
+	} catch (err) {
+		return res.status(500).send({
+			staus: 'error',
+			message: 'Could not create a new user'
+		})
+	}
+}
+
+
+
 export const loginUser = async (req: Request, res: Response) => {
 	const { email, password } = req.body
 
@@ -56,43 +99,3 @@ export const loginUser = async (req: Request, res: Response) => {
 	})
 }
 
-
-export const registerUser = async (req: Request, res: Response) => {
-
-	const validationErrors = validationResult(req)
-	if (!validationErrors.isEmpty()) {
-		return res.status(400).send({
-			status: "fail",
-			data: validationErrors.array(),
-		})
-	}
-	const validatedData = matchedData(req)
-
-	const hashedPassword = await bcrypt.hash(validatedData.password, Number(process.env.SALT_ROUNDS) || 10)
-
-	validatedData.password = hashedPassword
-
-	try {
-		const register = await createUser({
-			email:      validatedData.email,
-			password:   validatedData.password,
-			first_name: validatedData.first_name,
-			last_name:  validatedData.last_name,
-		})
-
-		return res.status(201).send({
-			status: "success",
-			data: {
-			  email: register.email,
-			  first_name: register.first_name,
-			  last_name: register.last_name
-			}
-		  })
-
-	} catch (err) {
-		return res.status(500).send({
-			staus: 'error',
-			message: 'Could not create a new user'
-		})
-	}
-}

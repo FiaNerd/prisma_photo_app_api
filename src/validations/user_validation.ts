@@ -1,4 +1,5 @@
 import { body } from 'express-validator'
+import { getUserByEmail } from '../services/user_service'
 
 export const registerValidationRules = [
 	body('email')
@@ -6,7 +7,13 @@ export const registerValidationRules = [
 		.toLowerCase()
 		.isEmail()
 		.withMessage("Not a valid email")
-		.bail(),
+		.custom(async (value: string) => {
+			const user = await getUserByEmail(value)
+
+			if (user) {
+				return Promise.reject("Email already exists")
+			}
+		}),
 
 	body('password')
 		.isString()
@@ -24,8 +31,7 @@ export const registerValidationRules = [
 		.withMessage("It's required to add a first name")
 		.bail()
 		.isLength({min: 2})
-		.withMessage("Has to be at least 2 characters")
-		.bail(),
+		.withMessage("Has to be at least 2 characters"),
 
 		body('last_name')
 		.trim()
@@ -37,7 +43,6 @@ export const registerValidationRules = [
 		.withMessage("It's required to add a last name")
 		.bail()
 		.isLength({min: 3})
-		.withMessage("Has to be at least 3 characters")
-		.bail(),
+		.withMessage("Has to be at least 3 characters"),
 ]
 

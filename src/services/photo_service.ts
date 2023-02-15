@@ -11,7 +11,7 @@ import { CreatePhoto, UpdatePhotoData } from '../types'
 
 
 	export const getPhotoById = async (photoId: number) => {
-		return await prisma.photo.findUnique({
+		return await prisma.photo.findUniqueOrThrow({
 			where: {
 			id: photoId
 			},
@@ -20,6 +20,7 @@ import { CreatePhoto, UpdatePhotoData } from '../types'
 
 
 	export const createPhoto = async (data: CreatePhoto) => {
+
 		const { title, url, comment, user_id } = data;
 
 		return await prisma.photo.create({

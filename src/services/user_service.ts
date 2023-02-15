@@ -8,7 +8,7 @@ export const createUser = async (data: CreateUserData) => {
 }
 
 
-//TODO: Change this name to maybe loginBtEmail
+//TODO: Change this name to maybe loginByEmail
 export const getUserByEmail = async (email: string) => {
 	return prisma.user.findUnique({
 		where: {
