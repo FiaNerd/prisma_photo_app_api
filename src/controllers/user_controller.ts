@@ -36,14 +36,17 @@ export const loginUser = async (req: Request, res: Response) => {
 	}
 
 
-	// TODO: SE om du kan flytta denna till server filen eller app filen istället, så den säger till tidigare att om man inte hat genererat någon acces token
+	// TODO: SE om du kan flytta denna till server filen eller app filen istället, så den säger till tidigare att om man inte har genererat någon acces token
 	if (!process.env.ACCESS_TOKEN_SECRET) {
 		return res.status(500).send({
 			status: "error",
 			message: "No access token secret defined",
 		})
 	}
-	const access_token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET )
+
+	const access_token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+		expiresIn: process.env.ACCESS_TOKEN_LIFETIME || '4h',
+	})
 
 	res.status(200).send({
 		status: "success",
@@ -85,6 +88,7 @@ export const registerUser = async (req: Request, res: Response) => {
 			  last_name: register.last_name
 			}
 		  })
+
 	} catch (err) {
 		return res.status(500).send({
 			staus: 'error',
