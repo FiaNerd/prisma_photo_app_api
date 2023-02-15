@@ -36,7 +36,8 @@
 	//JWT
 	export type JwtPayload = {
 		sub: number,
-		name: string,
+		first_name: string,
+		last_name: string,
 		email: string,
 		user_id: number,
 		iat?: number,
