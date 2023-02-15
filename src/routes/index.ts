@@ -31,15 +31,15 @@ router.use('/register', registerValidationRules, registerUser)
 router.use('/login', loginUser)
 
 
-router.use(validateToken)
+// router.use(validateToken)
 /*
 	POST /photos
 */
-router.use('/photos', photoValidationRules, photos)
+router.use('/photos', photoValidationRules, validateToken, photos)
 
 /*
 	POST /albums
 */
-router.use('/albums', albumValidationRules, albums)
+router.use('/albums', albumValidationRules, validateToken,albums)
 
 export default router
