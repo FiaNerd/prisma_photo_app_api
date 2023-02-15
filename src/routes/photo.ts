@@ -23,7 +23,7 @@ router.post('/', store)
  * PATCH /photos/:photoId
  */
 router.patch('/:photoId', update)
-// router.patch('/:photoId', [], update)
+
 
 /**
  * DELETE /photos/:photoId
