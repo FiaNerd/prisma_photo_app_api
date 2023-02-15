@@ -2,7 +2,7 @@ import express from "express"
 import { registerValidationRules } from '../validations/user_validation'
 import { photoValidationRules } from '../validations/photo_validation'
 import { albumValidationRules } from '../validations/album_validation'
-import { registerUser, loginUser } from '../controllers/user_controller'
+import { registerUser, loginUser, refreshToken } from '../controllers/auth_controller'
 import photos from './photo'
 import albums from './album'
 import { validateToken } from '../middlewares/auth/jwt'
@@ -29,6 +29,8 @@ router.use('/register', registerValidationRules, registerUser)
 	POST /login
 */
 router.use('/login', loginUser)
+
+router.use('/refresh', refreshToken)
 
 
 // router.use(validateToken)

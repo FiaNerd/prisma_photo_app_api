@@ -12,12 +12,13 @@ const debug = Debug('prisma-boilerplate:I_AM_LAZY_AND_HAVE_NOT_CHANGED_THIS_😛
 export const registerUser = async (req: Request, res: Response) => {
 
 	const validationErrors = validationResult(req)
-	if (!validationErrors.isEmpty()) {
-		return res.status(400).send({
-			status: "fail",
-			data: validationErrors.array(),
-		})
-	}
+
+		if (!validationErrors.isEmpty()) {
+			return res.status(400).send({
+				status: "fail",
+				data: validationErrors.array(),
+			})
+		}
 	const validatedData = matchedData(req)
 
 	const hashedPassword = await bcrypt.hash(validatedData.password, Number(process.env.SALT_ROUNDS) || 10)
@@ -64,6 +65,7 @@ export const loginUser = async (req: Request, res: Response) => {
 	}
 
 	const result = await bcrypt.compare(password, user.password)
+
 	if (!result) {
 		return res.status(401).send({
 			status: "fail",
@@ -92,10 +94,23 @@ export const loginUser = async (req: Request, res: Response) => {
 		expiresIn: process.env.ACCESS_TOKEN_LIFETIME || '4h',
 	})
 
+
+	if (!process.env.REFRESH_TOKEN_SECRET) {
+		return res.status(500).send({
+			status: "error",
+			message: "No refresh token secret defined",
+		})
+	}
+
+	const refresh_token = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+		expiresIn: process.env.REFRESH_TOKEN_LIFETIME || '1d',
+	})
+
 	res.status(200).send({
 		status: "success",
 		data: {
-			access_token: access_token
+			access_token: access_token,
+			refresh_token: refresh_token
 		}
 	})
 }

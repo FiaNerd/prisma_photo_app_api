@@ -3,7 +3,7 @@
  */
 import express from 'express'
 import { body } from 'express-validator'
-import { registerUser  } from '../controllers/user_controller'
+import { registerUser  } from '../controllers/auth_controller'
 
 const router = express.Router()
 

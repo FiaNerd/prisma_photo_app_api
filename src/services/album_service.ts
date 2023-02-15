@@ -4,6 +4,8 @@ import { CreateAlbumData,  UpdateAlbumData } from '../types'
 import Debug from 'debug'
 const debug = Debug('prisma-books:album_service')
 
+
+	// /albums
 	export const getAlbums = (user_id: number) => {
 
 		return prisma.album.findMany({
@@ -14,8 +16,8 @@ const debug = Debug('prisma-books:album_service')
 	}
 
 
+	// /albums/:albumId
 	export const getAlbumById = (albumId: number) =>{
-
 		return prisma.album.findUnique({
 			where: {
 				id: albumId
@@ -27,6 +29,7 @@ const debug = Debug('prisma-books:album_service')
 	}
 
 
+	// /albums
 	export const createAlbum = async (data: CreateAlbumData) => {
 
 		const { title, user_id } = data;
@@ -43,6 +46,8 @@ const debug = Debug('prisma-books:album_service')
 		});
 	};
 
+
+	// /albums/:albumId
 	export const updateAlbum = async (albumId: number, albumUpdate: UpdateAlbumData) => {
 
 		return await prisma.album.update({
@@ -54,6 +59,7 @@ const debug = Debug('prisma-books:album_service')
 	}
 
 
+	//Create /albums/:albumId/photos
 	export const createPhotosToAlbum = async (albumId: number, photoIds: number[]) => {
 
 		return await prisma.album.update({

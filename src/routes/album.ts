@@ -19,7 +19,6 @@ router.get('/:albumId', show)
  */
 router.post('/', store)
 
-
 /*
 	PATCH /albums/:albumId
 */
