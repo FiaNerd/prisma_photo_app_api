@@ -12,6 +12,7 @@ const debug = Debug('prisma-boilerplate:I_AM_LAZY_AND_HAVE_NOT_CHANGED_THIS_😛
 export const registerUser = async (req: Request, res: Response) => {
 
 	const validationErrors = validationResult(req)
+
 	if (!validationErrors.isEmpty()) {
 		return res.status(400).send({
 			status: "fail",
@@ -59,7 +60,7 @@ export const loginUser = async (req: Request, res: Response) => {
 	if (!user) {
 		return res.status(401).send({
 			status: "fail",
-			message: "Authorization required",
+			message: "This user don't exist, try again",
 		})
 	}
 
