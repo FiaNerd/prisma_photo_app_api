@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
 import { createPhoto, getPhotos, getPhotoById, updatePhoto, deletePhoto } from '../services/photo_service'
 
-const debug = Debug('prisma_photo_app_api:photo_contoller')
+const debug = Debug('prisma_photo_app_api:photo_controller')
 
 		export const index = async (req: Request, res: Response) => {
 
@@ -192,83 +192,35 @@ const debug = Debug('prisma_photo_app_api:photo_contoller')
 			message: "User is not authenticated"
 		});
 		}
-		const validatedData = matchedData(req)
+
+		const photo = await getPhotoById(photoId);
+
+			if (!photo) {
+				return res.status(400).send({
+					status: "fail",
+					message: `There is no photo with  id: ${photoId}`
+				});
+			} else if (photo.user_id !== user_id) {
+				return res.status(401).send({
+					status: "fail",
+					message: "User is not authorized to delet this photo"
+				});
+				}
+
 
 		try {
-			const destroyPhoto = await deletePhoto(photoId)
+			await deletePhoto(photoId)
 
-			if (destroyPhoto.user_id !== user_id) {
-			return res.status(401).send({
-				status: "fail",
-				message: "User is not authorized to delet this photo"
-			});
-			}
-
-			if (!destroyPhoto) {
-				return res.status(404).send({
-					status: "fail",
-					message: "Photo not found"
-				});
-			}
-
-		return res.status(200).send({
-			status: "success",
-			data: null,
-		});
+			return res.status(200).send({
+				status: "success",
+				data: null,
+		  });
 
 		} catch (err) {
 		return res.status(500).send({
 			status: 'error',
 			message: 'The server is down. Please try again'
 		})
-		}
+	  }
 	}
-}
-
-/**
- * Delete a resource
- */
-export const destroy = async (req: Request, res: Response) => {
-
-	const photoId = Number(req.params.photoId)
-
-	const user_id = req.token ? req.token.user_id : NaN;
-
-	if (!req.token || isNaN(req.token.user_id)) {
-	  return res.status(401).send({
-		status: "fail",
-		message: "User is not authenticated"
-	  });
-	}
-	const validatedData = matchedData(req)
-
-	try {
-		const destroyPhoto = await deletePhoto(photoId)
-
-		if (destroyPhoto.user_id !== user_id) {
-		  return res.status(401).send({
-			status: "fail",
-			message: "User is not authorized to delet this photo"
-		  });
-		}
-
-		if (!destroyPhoto) {
-			return res.status(404).send({
-				status: "fail",
-				message: "Photo not found"
-			});
-		}
-
-	  return res.status(200).send({
-		status: "success",
-		data: null,
-	  });
-
-	} catch (err) {
-	  return res.status(500).send({
-		status: 'error',
-		message: 'The server is down. Please try again'
-	  })
-	}
-}
 
