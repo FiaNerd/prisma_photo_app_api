@@ -77,3 +77,20 @@ const debug = Debug('prisma-books:album_service')
 		});
 	  };
 
+	  //Remove /albums/:albumId/photos/:photoId
+	  export const removePhotosFromAlbum = async (albumId: number, photoId: number) => {
+
+			return await prisma.album.update({
+				where: {
+					id: albumId,
+				},
+				data: {
+					photos: {
+						disconnect: {
+							id: photoId,
+						}
+					},
+				},
+			})
+	    }
+
