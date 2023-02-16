@@ -23,11 +23,16 @@ router.post('/', store)
 	PATCH /albums/:albumId
 */
 router.patch('/:albumId', update)
+
+
 /*
 	POSTS /albums/:albumId/photos
 */
 router.post('/:albumId/photos', addPhotoToAlbum)
 
-
+/*
+	DELETE /albums/:albumId/photos/:photoId
+*/
+router.delete('/:albumId/photos/:photoId')
 
 export default router
