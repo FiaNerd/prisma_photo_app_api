@@ -1,6 +1,7 @@
 import prisma from '../prisma'
 import { CreateAlbumData,  UpdateAlbumData } from '../types'
 
+
 import Debug from 'debug'
 const debug = Debug('prisma-books:album_service')
 
@@ -18,16 +19,22 @@ const debug = Debug('prisma-books:album_service')
 
 	// /albums/:albumId
 	export const getAlbumById = (albumId: number) =>{
-		return prisma.album.findUnique({
-			where: {
-				id: albumId
-			},
-			include: {
-				photos: true
-			}
-		})
-	}
 
+		try {
+
+			return prisma.album.findUnique({
+				where: {
+					id: albumId
+				},
+				include: {
+					photos: true
+				}
+			})
+		} catch (err) {
+			console.log("Can't fin id",err)
+			debug("Error thrown when removing photo %o from album %o: %o")
+	}
+	}
 
 	// /albums
 	export const createAlbum = async (data: CreateAlbumData) => {
@@ -76,4 +83,26 @@ const debug = Debug('prisma-books:album_service')
 		  }
 		});
 	  };
+
+
+	//Remove /albums/:albumId/photos/:photoId
+	export const disconnectPhotoFromAlbum = async (albumId: number, photoId: number) => {
+		try {
+
+			return await prisma.album.update({
+			where: {
+				id: Number(albumId),
+			},
+			data: {
+				photos: {
+				disconnect: {
+					id: Number(photoId),
+				}
+				},
+			},
+			})
+		} catch (err) {
+			debug("Error thrown when removing photo %o from album %o: %o", albumId, photoId, err)
+		}
+  }
 

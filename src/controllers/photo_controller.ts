@@ -150,6 +150,7 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 		const validatedData = matchedData(req)
 
 		try {
+
 		const patchPhoto = await updatePhoto(photoId, validatedData);
 
 		if (patchPhoto.user_id !== user_id) {
