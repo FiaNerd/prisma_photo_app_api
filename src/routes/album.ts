@@ -38,6 +38,6 @@ router.delete('/:albumId/photos/:photoId',removePhotoFromAlbum )
 /*
 	DELETE /albums/:albumId
 */
-router.delete('/albums/:albumId', destroy)
+router.delete('/:albumId', destroy)
 
 export default router

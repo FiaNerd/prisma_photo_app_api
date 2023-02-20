@@ -3,7 +3,7 @@
 	import { Request, Response } from 'express'
 	import { matchedData, validationResult } from 'express-validator'
 import prisma from '../prisma'
-	import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum, disconnectPhotoFromAlbum } from '../services/album_service'
+	import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum, disconnectPhotoFromAlbum, deleteAlbum } from '../services/album_service'
 	import {  getPhotoById } from '../services/photo_service'
 
 	const debug = Debug('prisma_photo_app_api:album_contoller')
@@ -317,5 +317,9 @@ import prisma from '../prisma'
 
 
 		  export const destroy = async (req: Request, res: Response) => {
+
+			const albumId = Number(req.params.albumId);
+
+			return await deleteAlbum(albumId)
 
 		  }
