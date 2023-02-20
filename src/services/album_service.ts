@@ -104,5 +104,9 @@ const debug = Debug('prisma-books:album_service')
 		} catch (err) {
 			debug("Error thrown when removing photo %o from album %o: %o", albumId, photoId, err)
 		}
-  }
+  	}
 
+
+	export const deleteAlbum = async (albumId: number) => {
+
+	}

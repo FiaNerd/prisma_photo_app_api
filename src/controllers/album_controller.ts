@@ -2,6 +2,7 @@
 	import Debug from 'debug'
 	import { Request, Response } from 'express'
 	import { matchedData, validationResult } from 'express-validator'
+import prisma from '../prisma'
 	import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum, disconnectPhotoFromAlbum } from '../services/album_service'
 	import {  getPhotoById } from '../services/photo_service'
 
@@ -313,3 +314,8 @@
 			  });
 			}
 		  };
+
+
+		  export const destroy = async (req: Request, res: Response) => {
+
+		  }
