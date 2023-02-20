@@ -2,7 +2,7 @@
 	import Debug from 'debug'
 	import { Request, Response } from 'express'
 	import { matchedData, validationResult } from 'express-validator'
-	import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum } from '../services/album_service'
+	import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum, disconnectPhotoFromAlbum } from '../services/album_service'
 	import {  getPhotoById } from '../services/photo_service'
 
 
@@ -143,6 +143,7 @@
 				message: "User is not authenticated"
 			});
 			}
+
 			const validatedData = matchedData(req)
 
 			try {
@@ -252,5 +253,48 @@
 					staus: 'error',
 					message: 'Sorry, the server is down'
 				})
+			}
+		}
+
+
+		export const removePhotoFromAlbum = async (req: Request, res: Response) => {
+			const albumId = Number(req.params.albumId)
+			const photoId = Number(req.params.photoId)
+
+			// const user_id = req.token ? req.token.user_id : NaN;
+
+			if (!req.token || isNaN(req.token.user_id)) {
+				return res.status(401).send({
+				status: "fail",
+				message: "User is not authenticated"
+				});
+			}
+
+			try {
+				const photo = await disconnectPhotoFromAlbum(albumId,photoId)
+
+				console.log("Photo", photo);
+
+				if (!photo) {
+					return res.status(401).send({
+						status: "fail",
+						message: `There is no photo with that id: ${albumId}`
+					});
+				}
+
+				console.log("Album ID: " + albumId, "Photo ID ", photoId, "Hela photo", photo)
+
+				res.status(200).send({
+					status: "success",
+					message: null,
+				});
+
+			} catch (err) {
+				debug("Error thrown when removing photo %o from album %o: %o", req.params.photoId, req.params.albumId, err)
+
+				res.status(500).send({
+					status: "error",
+					message: "Internal Server Error, try again"
+				});
 			}
 		}

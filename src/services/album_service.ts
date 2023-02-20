@@ -77,20 +77,25 @@ const debug = Debug('prisma-books:album_service')
 		});
 	  };
 
-	  //Remove /albums/:albumId/photos/:photoId
-	  export const removePhotosFromAlbum = async (albumId: number, photoId: number) => {
+
+	//Remove /albums/:albumId/photos/:photoId
+	export const disconnectPhotoFromAlbum = async (albumId: number, photoId: number) => {
+		try {
 
 			return await prisma.album.update({
-				where: {
-					id: albumId,
+			where: {
+				id: Number(albumId),
+			},
+			data: {
+				photos: {
+				disconnect: {
+					id: Number(photoId),
+				}
 				},
-				data: {
-					photos: {
-						disconnect: {
-							id: photoId,
-						}
-					},
-				},
+			},
 			})
-	    }
+		} catch (err) {
+			debug("Error thrown when removing photo %o from album %o: %o", albumId, photoId, err)
+		}
+  }
 
