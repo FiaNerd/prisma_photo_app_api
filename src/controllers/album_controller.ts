@@ -3,9 +3,7 @@
 	import { Request, Response } from 'express'
 	import { matchedData, validationResult } from 'express-validator'
 	import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum, disconnectPhotoFromAlbum } from '../services/album_service'
-	import { CreateAlbumData, CreatePhoto } from '../types'
 	import {  getPhotoById } from '../services/photo_service'
-
 
 	const debug = Debug('prisma_photo_app_api:album_contoller')
 
@@ -276,7 +274,7 @@
 
 			  const album = await getAlbumById(albumId);
 
-			  if (!album) {
+			  if (!album ) {
 				return res.status(404).send({
 				  status: "fail",
 				  message: `Album with ID ${albumId} not
@@ -284,11 +282,20 @@
 			  })
 			}
 
-			 if (album.user_id !== user_id || photo.user_id !== user_id) {
+			if (album.user_id !== user_id || photo.user_id !== user_id) {
 				return res.status(401).send({
 					status: "fail",
 					message: "User is not authorized to delet this photo"
 				})
+			}
+
+			const photoInAlbum = album.photos.find((photo) => photo.id === photoId);
+
+			if (!photoInAlbum) {
+			  return res.status(404).send({
+				status: "fail",
+				message: `Photo with ID ${photoId} not found in album with ID ${albumId}`
+			  });
 			}
 
 			  await disconnectPhotoFromAlbum(albumId, photoId);
