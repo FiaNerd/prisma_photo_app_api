@@ -1,5 +1,8 @@
 import prisma from '../prisma'
 import { CreatePhoto, UpdatePhotoData } from '../types'
+import Debug from 'debug'
+
+const debug = Debug('prisma_photo_app_api:album_contoller')
 
 	export const getPhotos = (user_id: number) => {
 		return prisma.photo.findMany({
@@ -11,11 +14,16 @@ import { CreatePhoto, UpdatePhotoData } from '../types'
 
 
 	export const getPhotoById = async (photoId: number) => {
-		return await prisma.photo.findUniqueOrThrow({
-			where: {
-			id: photoId
-			},
-		})
+		// try {
+
+			return await prisma.photo.findUnique({
+				where: {
+				id: photoId
+				},
+			})
+		// } catch (error) {
+		// 	debug("Error thrown when removing photo %o from album %o: %o")
+		// }
 	}
 
 

@@ -3,6 +3,7 @@
 	import { Request, Response } from 'express'
 	import { matchedData, validationResult } from 'express-validator'
 	import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum, disconnectPhotoFromAlbum } from '../services/album_service'
+	import { CreateAlbumData, CreatePhoto } from '../types'
 	import {  getPhotoById } from '../services/photo_service'
 
 
@@ -209,14 +210,7 @@
 				const photo = await getPhotoById(photoId);
 
 				if (!photo) {
-					return res.status(400).send({
-						status: "fail",
-						message: `There is no photo with that id: ${photoId}`
-					});
-				}
-
-				if (!photo) {
-					return res.status(400).send({
+					return res.status(404).send({
 						status: "fail",
 						message: `There is no photo with that id: ${photoId}`
 					});
@@ -258,43 +252,57 @@
 
 
 		export const removePhotoFromAlbum = async (req: Request, res: Response) => {
-			const albumId = Number(req.params.albumId)
-			const photoId = Number(req.params.photoId)
+			const albumId = Number(req.params.albumId);
+			const photoId = Number(req.params.photoId);
 
-			// const user_id = req.token ? req.token.user_id : NaN;
+		const user_id = req.token ? req.token.user_id : NaN;
 
 			if (!req.token || isNaN(req.token.user_id)) {
-				return res.status(401).send({
+			  return res.status(401).send({
 				status: "fail",
 				message: "User is not authenticated"
-				});
+			  });
 			}
 
 			try {
-				const photo = await disconnectPhotoFromAlbum(albumId,photoId)
+			  const photo = await getPhotoById(photoId);
 
-				console.log("Photo", photo);
-
-				if (!photo) {
-					return res.status(401).send({
-						status: "fail",
-						message: `There is no photo with that id: ${albumId}`
-					});
-				}
-
-				console.log("Album ID: " + albumId, "Photo ID ", photoId, "Hela photo", photo)
-
-				res.status(200).send({
-					status: "success",
-					message: null,
+			  if (!photo) {
+				return res.status(404).send({
+					status: "fail",
+					 message: `Photo with ID ${photoId} not found in album with ID ${albumId}`
 				});
+			  }
+
+			  const album = await getAlbumById(albumId);
+
+			  if (!album) {
+				return res.status(404).send({
+				  status: "fail",
+				  message: `Album with ID ${albumId} not
+				  found`
+			  })
+			}
+
+			 if (album.user_id !== user_id || photo.user_id !== user_id) {
+				return res.status(401).send({
+					status: "fail",
+					message: "User is not authorized to delet this photo"
+				})
+			}
+
+			  await disconnectPhotoFromAlbum(albumId, photoId);
+
+				return res.status(200).send({
+					status: "success",
+				    message: "Photo removed from album"
+				})
 
 			} catch (err) {
-				debug("Error thrown when removing photo %o from album %o: %o", req.params.photoId, req.params.albumId, err)
-
-				res.status(500).send({
-					status: "error",
-					message: "Internal Server Error, try again"
-				});
+				debug("Error thrown when removing photo %o from album %o: %o")
+			  return res.status(500).send({
+				status: "error",
+				message: "Internal Server Error, try again"
+			  });
 			}
-		}
+		  };
