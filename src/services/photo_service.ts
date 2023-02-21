@@ -1,5 +1,5 @@
 import prisma from '../prisma'
-import { CreatePhoto, UpdatePhotoData } from '../types'
+import { CreatePhotoData, UpdatePhotoData } from '../types'
 import Debug from 'debug'
 
 const debug = Debug('prisma_photo_app_api:album_contoller')
@@ -27,7 +27,7 @@ const debug = Debug('prisma_photo_app_api:album_contoller')
 	}
 
 
-	export const createPhoto = async (data: CreatePhoto) => {
+	export const createPhoto = async (data: CreatePhotoData) => {
 
 		const { title, url, comment, user_id } = data;
 
