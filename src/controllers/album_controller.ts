@@ -2,7 +2,8 @@
 	import Debug from 'debug'
 	import { Request, Response } from 'express'
 	import { matchedData, validationResult } from 'express-validator'
-	import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum, disconnectPhotoFromAlbum } from '../services/album_service'
+import prisma from '../prisma'
+	import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum, disconnectPhotoFromAlbum, deleteAlbum } from '../services/album_service'
 	import {  getPhotoById } from '../services/photo_service'
 
 	const debug = Debug('prisma_photo_app_api:album_contoller')
@@ -307,6 +308,50 @@
 
 			} catch (err) {
 				debug("Error thrown when removing photo %o from album %o: %o")
+			  return res.status(500).send({
+				status: "error",
+				message: "Internal Server Error, try again"
+			  });
+			}
+		  };
+
+
+		  export const destroy = async (req: Request, res: Response) => {
+
+			  const albumId = Number(req.params.albumId);
+
+			  const user_id = req.token ? req.token.user_id : NaN;
+
+			  if (!req.token || isNaN(req.token.user_id)) {
+				return res.status(401).send({
+				  status: "fail",
+				  message: "User is not authenticated"
+				})
+			  }
+
+		 try {
+			  const album = await deleteAlbum(albumId);
+
+			  if (!album) {
+				return res.status(404).send({
+				  status: "fail",
+				  message: `Album with ID ${albumId} not found`
+				});
+			  }
+
+			  if (album.user_id !== user_id) {
+				return res.status(401).send({
+				  status: "fail",
+				  message: "User is not authorized to delete this album"
+				});
+			  }
+
+			  res.status(200).send({
+				status: "success",
+				data: null
+			  });
+
+			} catch (err) {
 			  return res.status(500).send({
 				status: "error",
 				message: "Internal Server Error, try again"

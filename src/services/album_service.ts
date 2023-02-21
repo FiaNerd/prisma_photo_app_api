@@ -104,5 +104,40 @@ const debug = Debug('prisma-books:album_service')
 		} catch (err) {
 			debug("Error thrown when removing photo %o from album %o: %o", albumId, photoId, err)
 		}
-  }
+  	}
 
+
+	  export const deleteAlbum = async (albumId: number) => {
+
+		const album = await prisma.album.findUnique({
+		  where: {
+			id: albumId
+		  },
+		  include: {
+			photos: true
+		  },
+		});
+
+		const photoIds = album?.photos?.map(photo => photo.id) || [];
+
+		const photo = photoIds.map(id => ({ id }));
+
+		await prisma.album.update({
+		  where: {
+			id: albumId
+		  },
+		  data: {
+			photos: {
+			  disconnect: photo
+			}
+		  },
+		});
+
+		await prisma.album.delete({
+		  where: {
+			id: albumId
+		  }
+		});
+
+		return album;
+	  }
