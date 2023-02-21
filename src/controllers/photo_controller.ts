@@ -17,15 +17,19 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 			}
 
 			try {
-			const photos = await getPhotos(user_id);
+				const photos = await getPhotos(user_id);
 
-			return res.status(200).send({
-				status: "success",
-				data: photos
-			});
+				const newPhotos = photos.map(photo => {
+				  const { user_id, ...newPhoto } = photo;
+				  return newPhoto;
+				});
+
+				return res.status(200).send({
+				  status: "success",
+				  data: newPhotos
+				})
 
 			} catch (err) {
-			console.error("Error thrown when finding photos: ", err)
 
 			return res.status(500).send({
 				status: 'error',
