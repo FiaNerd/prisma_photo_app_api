@@ -61,9 +61,9 @@ import prisma from '../prisma'
 			}
 
 			if (album.user_id !== user_id) {
-				return res.status(403).send({
+				return res.status(401).send({
 				status: "fail",
-				message: "Not authorized to access this photo"
+				message: "Not authorized to access this album"
 				});
 			}
 
