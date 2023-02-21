@@ -2,28 +2,23 @@ import prisma from '../prisma'
 import { CreatePhotoData, UpdatePhotoData } from '../types'
 import Debug from 'debug'
 
-const debug = Debug('prisma_photo_app_api:album_contoller')
+const debug = Debug('prisma_photo_app_api:photo_controller')
 
 	export const getPhotos = (user_id: number) => {
 		return prisma.photo.findMany({
-		where: {
-			user_id: user_id
-		}
+			where: {
+				user_id: user_id
+			},
 		})
 	}
 
 
 	export const getPhotoById = async (photoId: number) => {
-		// try {
-
-			return await prisma.photo.findUnique({
-				where: {
+		return await prisma.photo.findUnique({
+			where: {
 				id: photoId
-				},
-			})
-		// } catch (error) {
-		// 	debug("Error thrown when removing photo %o from album %o: %o")
-		// }
+			},
+		})
 	}
 
 
@@ -47,18 +42,14 @@ const debug = Debug('prisma_photo_app_api:album_contoller')
 
 
 	export const updatePhoto = async (photoId: number, photoUpdate: UpdatePhotoData) => {
-		try {
-		return await prisma.photo.update({
-			where: {
-			id: photoId
-			},
-			data: photoUpdate
-		});
-		} catch (error) {
-		console.error(error);
-		throw error;
-		}
-	};
+
+			return await prisma.photo.update({
+				where: {
+				id: photoId
+				},
+				data: photoUpdate
+			});
+	}
 
 
 	export const deletePhoto = async (photoId: number) => {
