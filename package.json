@@ -4,7 +4,8 @@
   "description": "",
   "main": "build/server.js",
   "scripts": {
-    "build": "tsc && npx prisma migrate deploy",
+    "build": "env-cmd --silent bash scripts/build.sh",
+    "build-app": "tsc",
     "migrate": "npx prisma migrate deploy",
     "dev": "cross-env DEBUG=prisma_photo_app_api:* nodemon server.ts",
     "start": "node build/server.js",
