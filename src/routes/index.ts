@@ -1,5 +1,5 @@
 import express from "express"
-import { registerValidationRules } from '../validations/user_validation'
+import { registerValidationRules, loginValidationRules } from '../validations/user_validation'
 import { photoValidationRules } from '../validations/photo_validation'
 import { albumValidationRules } from '../validations/album_validation'
 import { registerUser, loginUser, refreshToken } from '../controllers/auth_controller'
@@ -28,7 +28,7 @@ router.use('/register', registerValidationRules, registerUser)
 /*
 	POST /login
 */
-router.use('/login', loginUser)
+router.use('/login', loginValidationRules,loginUser)
 
 router.use('/refresh', refreshToken)
 

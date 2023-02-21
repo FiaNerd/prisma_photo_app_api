@@ -3,9 +3,9 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { Request, Response } from 'express'
 import { matchedData, validationResult } from 'express-validator'
-import { createUser, getUserByEmail } from '../services/user_service'
+import { createUser, loginByEmail } from '../services/user_service'
 import { JwtPayload } from '../types'
-// Create a new debug instance
+
 const debug = Debug('prisma-boilerplate:I_AM_LAZY_AND_HAVE_NOT_CHANGED_THIS_😛')
 
 
@@ -19,6 +19,7 @@ export const registerUser = async (req: Request, res: Response) => {
 				data: validationErrors.array(),
 			})
 		}
+
 	const validatedData = matchedData(req)
 
 	const hashedPassword = await bcrypt.hash(validatedData.password, Number(process.env.SALT_ROUNDS) || 10)
@@ -53,9 +54,19 @@ export const registerUser = async (req: Request, res: Response) => {
 
 
 export const loginUser = async (req: Request, res: Response) => {
+
+	const validationErrors = validationResult(req)
+
+	if (!validationErrors.isEmpty()) {
+		return res.status(400).send({
+			status: "fail",
+			data: validationErrors.array(),
+		})
+	}
+
 	const { email, password } = req.body
 
-	const user = await getUserByEmail(email)
+	const user = await loginByEmail(email)
 
 	if (!user) {
 		return res.status(401).send({
@@ -82,7 +93,6 @@ export const loginUser = async (req: Request, res: Response) => {
 	}
 
 
-	// TODO: SE om du kan flytta denna till server filen eller app filen istället, så den säger till tidigare att om man inte har genererat någon acces token
 	if (!process.env.ACCESS_TOKEN_SECRET) {
 		return res.status(500).send({
 			status: "error",
