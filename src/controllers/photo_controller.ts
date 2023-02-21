@@ -54,19 +54,13 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 			try {
 			const photo = await getPhotoById(photoId);
 
-			if (!photo) {
+			if (!photo || photo.user_id !== user_id) {
 				return res.status(404).send({
 				status: "fail",
 				message: "Photo not found"
 				});
 			}
 
-			if (photo.user_id !== user_id) {
-				return res.status(403).send({
-				status: "fail",
-				message: "Not authorized to access this photo"
-				});
-			}
 
 			return res.status(200).send({
 				status: "success",

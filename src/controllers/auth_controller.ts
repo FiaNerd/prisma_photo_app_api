@@ -64,6 +64,7 @@ export const loginUser = async (req: Request, res: Response) => {
 		})
 	}
 
+
 	const { email, password } = req.body
 
 	const user = await loginByEmail(email)
@@ -124,6 +125,7 @@ export const loginUser = async (req: Request, res: Response) => {
 		}
 	})
 }
+
 
 /*
 	REFRESH TOKEN
