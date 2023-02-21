@@ -318,8 +318,43 @@ import prisma from '../prisma'
 
 		  export const destroy = async (req: Request, res: Response) => {
 
-			const albumId = Number(req.params.albumId);
+			  const albumId = Number(req.params.albumId);
 
-			return await deleteAlbum(albumId)
+			  const user_id = req.token ? req.token.user_id : NaN;
 
-		  }
+			  if (!req.token || isNaN(req.token.user_id)) {
+				return res.status(401).send({
+				  status: "fail",
+				  message: "User is not authenticated"
+				})
+			  }
+
+		 try {
+			  const album = await deleteAlbum(albumId);
+
+			  if (!album) {
+				return res.status(404).send({
+				  status: "fail",
+				  message: `Album with ID ${albumId} not found`
+				});
+			  }
+
+			  if (album.user_id !== user_id) {
+				return res.status(401).send({
+				  status: "fail",
+				  message: "User is not authorized to delete this album"
+				});
+			  }
+
+			  res.status(200).send({
+				status: "success",
+				data: null
+			  });
+
+			} catch (err) {
+			  return res.status(500).send({
+				status: "error",
+				message: "Internal Server Error, try again"
+			  });
+			}
+		  };

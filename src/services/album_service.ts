@@ -110,20 +110,34 @@ const debug = Debug('prisma-books:album_service')
 	  export const deleteAlbum = async (albumId: number) => {
 
 		const album = await prisma.album.findUnique({
-			where: { id: albumId },
-			include: { photos: true },
-		  });
+		  where: {
+			id: albumId
+		  },
+		  include: {
+			photos: true
+		  },
+		});
 
-		  const photoIds = album?.photos?.map(photo => photo.id) || [];
+		const photoIds = album?.photos?.map(photo => photo.id) || [];
 
-		  const photoWhere = photoIds.map(id => ({ id }));
+		const photo = photoIds.map(id => ({ id }));
 
-		  await prisma.album.update({
-			where: { id: albumId },
-			data: { photos: { disconnect: photoWhere } },
-		  });
+		await prisma.album.update({
+		  where: {
+			id: albumId
+		  },
+		  data: {
+			photos: {
+			  disconnect: photo
+			}
+		  },
+		});
 
-		  await prisma.album.delete({ where: { id: albumId } });
+		await prisma.album.delete({
+		  where: {
+			id: albumId
+		  }
+		});
 
-		return true;
-	};
+		return album;
+	  }
