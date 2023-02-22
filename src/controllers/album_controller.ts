@@ -71,7 +71,7 @@ import {  getPhotoById } from '../services/photo_service'
 		} catch (err) {
 			return res.status(500).send({
 				status: 'error',
-				message: 'Internal Server Error, could not retrieve photos'
+				message: 'Internal Server Error, could not retrieve album'
 			});
 			}
 		};
@@ -91,16 +91,9 @@ import {  getPhotoById } from '../services/photo_service'
 				})
 			}
 
-			const validatedData = matchedData(req)
+    		const validatedData = matchedData(req)
 
 			const user_id = req.token ? req.token.user_id : NaN;
-
-			if (!req.token || isNaN(req.token.user_id)) {
-				return res.status(401).send({
-					status: "fail",
-					message: "User is not authenticated"
-				});
-			}
 
 		try {
 			const album = await createAlbum({
@@ -116,7 +109,7 @@ import {  getPhotoById } from '../services/photo_service'
 		} catch (err) {
 				return res.status(500).send({
 					staus: 'error',
-					message: 'Sorry, the server is down'
+					message: 'Internal Server Error, could not retrieve album'
 			})
 		}
 	}

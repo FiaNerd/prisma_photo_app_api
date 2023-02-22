@@ -1,5 +1,4 @@
 import express from 'express'
-
 import {  index, show, store, update, addPhotoToAlbum, removePhotoFromAlbum, destroy  } from '../controllers/album_controller'
 
 const router = express.Router()
