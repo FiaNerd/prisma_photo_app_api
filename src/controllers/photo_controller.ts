@@ -49,7 +49,7 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 			if (!photo) {
 				return res.status(404).send({
 					status: "fail",
-					message: `Photo not found with id: [${photoId}]`
+					message: `Photo not found with ID: [${photoId}]`
 				});
 			}
 
@@ -179,15 +179,6 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 	 * Delete a photo
 	 */
 	export const destroy = async (req: Request, res: Response) => {
-
-		const validationErrors = validationResult(req)
-
-		if (!validationErrors.isEmpty()) {
-			return res.status(400).send({
-				status: "fail",
-				data: validationErrors.array(),
-			})
-		}
 
 		const photoId = Number(req.params.photoId)
 

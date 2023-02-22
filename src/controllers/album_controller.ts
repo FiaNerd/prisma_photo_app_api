@@ -1,25 +1,17 @@
 
-	import Debug from 'debug'
-	import { Request, Response } from 'express'
-	import { matchedData, validationResult } from 'express-validator'
-import prisma from '../prisma'
-	import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum, disconnectPhotoFromAlbum, deleteAlbum } from '../services/album_service'
-	import {  getPhotoById } from '../services/photo_service'
+import Debug from 'debug'
+import { Request, Response } from 'express'
+import { matchedData, validationResult } from 'express-validator'
+import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum, disconnectPhotoFromAlbum, deleteAlbum } from '../services/album_service'
+import {  getPhotoById } from '../services/photo_service'
 
 	const debug = Debug('prisma_photo_app_api:album_contoller')
 
-		export const index = async (req: Request, res: Response) => {
+	export const index = async (req: Request, res: Response) => {
 
-			const user_id = req.token ? req.token.user_id : NaN;
+		const user_id = req.token ? req.token.user_id : NaN;
 
-			if (!req.token || isNaN(req.token.user_id)) {
-			return res.status(401).send({
-				status: "fail",
-				message: "User is not authenticated"
-			});
-			}
-
-			try {
+		try {
 			const albums = await getAlbums(user_id);
 
 			return res.status(200).send({
@@ -27,43 +19,36 @@ import prisma from '../prisma'
 				data: albums
 			});
 
-			} catch (err) {
+		} catch (err) {
 
 			return res.status(500).send({
 				status: 'error',
-				message: 'Sorry, the server is down'
+				message: 'Internal Server Error, could not retrieve photos'
 			})
 			}
 		}
 
 
-		export const show = async (req: Request, res: Response) => {
+	export const show = async (req: Request, res: Response) => {
 
-			const albumId = Number(req.params.albumId)
+		const albumId = Number(req.params.albumId)
 
-			const user_id = req.token ? req.token.user_id : NaN;
+		const user_id = req.token ? req.token.user_id : NaN;
 
-			if (!req.token || isNaN(req.token.user_id)) {
-			return res.status(401).send({
-				status: "fail",
-				message: "User is not authenticated"
-			});
-			}
-
-			try {
+		try {
 			const album = await getAlbumById(albumId);
 
 			if (!album) {
 				return res.status(404).send({
-				status: "fail",
-				message: "Album not found"
+					status: "fail",
+					message: `Album not found with ID: [${albumId}]`
 				});
 			}
 
 			if (album.user_id !== user_id) {
 				return res.status(401).send({
-				status: "fail",
-				message: "Not authorized to access this album"
+					status: "fail",
+					message: `Not authorized to access this album with ID: [${albumId}]`
 				});
 			}
 
@@ -76,17 +61,17 @@ import prisma from '../prisma'
 				}
 			});
 
-			} catch (err) {
+		} catch (err) {
 			return res.status(500).send({
 				status: 'error',
-				message: 'Could not get the photo'
+				message: 'Internal Server Error, could not retrieve photos'
 			});
 			}
 		};
 
 
 
-		export const store = async (req: Request, res: Response) => {
+	export const store = async (req: Request, res: Response) => {
 
 			const validationErrors = validationResult(req)
 
