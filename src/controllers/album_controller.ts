@@ -269,22 +269,17 @@ import {  getPhotoById } from '../services/photo_service'
 	}
 
 
+	/**
+	* 	Delete a photo from album (!photo itself)
+	*/
 	export const removePhotoFromAlbum = async (req: Request, res: Response) => {
+
 		const albumId = Number(req.params.albumId);
 		const photoId = Number(req.params.photoId);
 
 		const user_id = req.token ? req.token.user_id : NaN;
 
 		try {
-		 	const photo = await getPhotoById(photoId);
-
-		 	if (!photo) {
-			return res.status(404).send({
-				status: "fail",
-				message: `Photo with ID: [${ photoId }] not found`
-				});
-			}
-
 			const album = await getAlbumById(albumId);
 
 			if (!album ) {
@@ -294,6 +289,16 @@ import {  getPhotoById } from '../services/photo_service'
 					found`
 				})
 			}
+
+			const photo = await getPhotoById(photoId);
+
+			if (!photo) {
+		   return res.status(404).send({
+			   status: "fail",
+			   message: `Photo with ID: [${ photoId }] not found`
+			   });
+		   }
+
 
 			if (album.user_id !== user_id && photo.user_id !== user_id) {
 				return res.status(401).send({
@@ -335,13 +340,6 @@ import {  getPhotoById } from '../services/photo_service'
 		const albumId = Number(req.params.albumId);
 
 		const user_id = req.token ? req.token.user_id : NaN;
-
-			if (!req.token || isNaN(req.token.user_id)) {
-				return res.status(401).send({
-				 	status: "fail",
-				 	message: "User is not authenticated"
-				})
-			}
 
 		try {
 
