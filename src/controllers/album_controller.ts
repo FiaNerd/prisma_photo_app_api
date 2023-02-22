@@ -275,20 +275,13 @@ import {  getPhotoById } from '../services/photo_service'
 
 		const user_id = req.token ? req.token.user_id : NaN;
 
-			if (!req.token || isNaN(req.token.user_id)) {
-			  return res.status(401).send({
-				status: "fail",
-				message: "User is not authenticated"
-			  });
-			}
-
 		try {
 		 	const photo = await getPhotoById(photoId);
 
 		 	if (!photo) {
 			return res.status(404).send({
 				status: "fail",
-				message: `Photo with ID: [${photoId}] not found in album with ID: [${albumId}]`
+				message: `Photo with ID: [${ photoId }] not found`
 				});
 			}
 
@@ -297,44 +290,41 @@ import {  getPhotoById } from '../services/photo_service'
 			if (!album ) {
 				return res.status(404).send({
 					status: "fail",
-					message: `Album with ID ${albumId} not
+					message: `Album with ID: [${ albumId }] not
 					found`
 				})
 			}
 
-			if (album.user_id !== user_id) {
+			if (album.user_id !== user_id && photo.user_id !== user_id) {
 				return res.status(401).send({
 					status: "fail",
-					message: `Not authorized to remove this photo ID: [${photoId}] from album ID: [${albumId}]`
+					message: `Not authorized to remove this photo ID: [${photoId}] from [${albumId}]`
 				})
 			}
-			else if (photo.user_id !== user_id) {
+		    if (album.user_id !== user_id) {
+				return res.status(401).send({
+					status: "fail",
+					message: `Not authorized to album ID: [${albumId}]`
+				})
+			}
+			 if (photo.user_id !== user_id) {
 				return res.status(401).send({
 					status: "fail",
 					message: `Not authorized to remove this photo ID: [${photoId}]`
 				})
-			}
-
-			const photoInAlbum = album.photos.find((photo) => photo.id === photoId);
-
-			if (!photoInAlbum) {
-			  return res.status(404).send({
-					status: "fail",
-					message: `Photo with ID ${photoId} not found in album with ID ${albumId}`
-			 	});
-			}
+			 }
 
 			await disconnectPhotoFromAlbum(albumId, photoId);
 
 				return res.status(200).send({
 					status: "success",
-				    message: "Photo removed from album"
+				    data: null
 				})
 
 		} catch (err) {
 			return res.status(500).send({
 				status: "error",
-				message: "Internal Server Error, try again"
+				message: 'Internal Server Error, could not retrieve album'
 			})
 		}
 	}
@@ -354,21 +344,23 @@ import {  getPhotoById } from '../services/photo_service'
 			}
 
 		try {
-			const album = await deleteAlbum(albumId);
+
+			const album = await getAlbumById(albumId)
 
 			if (!album) {
 				return res.status(404).send({
 					status: "fail",
-					message: `Album with ID ${albumId} not found`
+					message: `Album with ID: [${ albumId }] not found`
 				});
 			}
 
 			if (album.user_id !== user_id) {
 				return res.status(401).send({
-				  status: "fail",
-				  message: `Not authorized to delete this album ID: [${albumId}]`
+					status: "fail",
+					message: `Not authorized to delete this album ID: [${albumId}]`
 				});
 			}
+			await deleteAlbum(albumId);
 
 			res.status(200).send({
 				status: "success",
@@ -378,7 +370,7 @@ import {  getPhotoById } from '../services/photo_service'
 		} catch (err) {
 			return res.status(500).send({
 				status: "error",
-				message: "Internal Server Error, try again"
+				message: 'Internal Server Error, could not retrieve album'
 			});
 		}
 	};
