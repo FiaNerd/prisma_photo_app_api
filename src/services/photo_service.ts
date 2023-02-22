@@ -28,13 +28,13 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 
 		return await prisma.photo.create({
 			data: {
-			title,
-			url,
-			comment,
+				title,
+				url,
+				comment,
 			user: {
 				connect:
 				{
-					id: Number(user_id)
+					id: user_id
 				}}
 			}
 		});
@@ -58,5 +58,5 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 			id: photoId
 		  }
 		})
-	  }
+	}
 

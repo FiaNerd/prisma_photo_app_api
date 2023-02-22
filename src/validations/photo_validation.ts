@@ -1,6 +1,5 @@
 import { body } from 'express-validator'
 
-
 	export const photoValidationRules = [
 		body('title')
 			.trim()
@@ -31,7 +30,8 @@ import { body } from 'express-validator'
 			.bail()
 			.isLength({ min: 3})
 			.withMessage('Comments must be at least 3 chars long'),
-		]
+	]
+
 
 	export const updatePhotoValidationRules = [
 		body('title')
