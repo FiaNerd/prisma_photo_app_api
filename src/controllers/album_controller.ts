@@ -161,7 +161,7 @@ import {  getPhotoById } from '../services/photo_service'
 			if (patchAlbum.user_id !== user_id) {
 				return res.status(401).send({
 					status: "fail",
-					message: "User is not authorized to update this album"
+					message: `Not authorized to update this album ID: [${albumId}]`
 				});
 			}
 
@@ -183,18 +183,14 @@ import {  getPhotoById } from '../services/photo_service'
 	}
 
 
+	/**
+	*	Add photo to a album
+	*/
 	export const addPhotoToAlbum = async (req: Request, res: Response) => {
 
 		const photoIds: number[] = req.body.photo_id
 		const albumId = Number(req.params.albumId)
 		const user_id = req.token ? req.token.user_id : NaN;
-
-			if (!req.token || isNaN(req.token.user_id)) {
-				return res.status(401).send({
-				status: "fail",
-				message: "User is not authenticated"
-				});
-			}
 
 		const album = await getAlbumById(albumId);
 
@@ -205,38 +201,56 @@ import {  getPhotoById } from '../services/photo_service'
 				});
 			}
 
-			if (album.user_id !== user_id) {
-				return res.status(401).send({
+			if (!photoIds || photoIds.length === 0) {
+				return res.status(400).send({
 					status: "fail",
-					message: "User is not authorized to access this album"
+					message: "You have to add a photo"
+			 	});
+			}
+
+		const existingPhotoIds = album.photos
+			.filter(photo => photoIds.includes(photo.id))
+			.map(photo => photo.id);
+
+			if (existingPhotoIds.length > 0) {
+				return res.status(400).send({
+					status: "fail",
+					message: `The album already contains photos with the following IDs: [${existingPhotoIds.join(", ")}]`
 				});
 			}
 
+			if (album.user_id !== user_id) {
+				return res.status(401).send({
+					status: "fail",
+					message: `Not authorized to add a photo to this album ID: [${albumId}]`
+				});
+			}
+
+			if (!Array.isArray(photoIds) || !photoIds.every(id => typeof id === 'number')) {
+				return res.status(400).send({
+				status: "fail",
+				message: `Photo IDs must be numeric`
+				});
+			}
 
 			for (const photoId of photoIds) {
-				const photo = await getPhotoById(photoId);
+
+				const photo = await getPhotoById(photoId)
 
 				if (!photo) {
 					return res.status(404).send({
 						status: "fail",
-						message: `There is no photo with that id: ${photoId}`
-					});
+						message: `There is no photo with ID: [${photoId}]`
+					})
 				}
 
 				if (photo.user_id !== user_id) {
 					return res.status(401).send({
 						status: "fail",
-						message: "User is not authorized to access this photo"
-					});
+						message: `User is not authorized to access this photo with ID: [${photoId}]`
+					})
 				}
 			}
-
-			if (photoIds.length === 0) {
-				return res.status(200).send({
-					status: "fail",
-					message: "You have to add a photo"
-			 	});
-			  }
 
 		try {
 			await createPhotosToAlbum(albumId, photoIds)
@@ -247,7 +261,6 @@ import {  getPhotoById } from '../services/photo_service'
 			});
 
 		} catch (err) {
-			debug("Error thrown when adding photo %o to a album %o: %o", updateAlbum)
 				return res.status(500).send({
 					staus: 'error',
 					message: 'Internal Server Error, could not retrieve album'

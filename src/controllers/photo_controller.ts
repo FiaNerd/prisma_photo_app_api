@@ -126,33 +126,32 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 
 		const validationErrors = validationResult(req);
 
-		if (!validationErrors.isEmpty()) {
-		  return res.status(400).send({
-			status: 'fail',
-			data: validationErrors.array(),
-		  });
-		}
+			if (!validationErrors.isEmpty()) {
+			return res.status(400).send({
+				status: 'fail',
+				data: validationErrors.array(),
+			});
+			}
 
-		const photoId = Number(req.params.photoId);
-		const user_id = req.token ? req.token.user_id : NaN;
-		const validatedData = matchedData(req);
+			const photoId = Number(req.params.photoId);
+			const user_id = req.token ? req.token.user_id : NaN;
+			const validatedData = matchedData(req);
 
-		const photo = await getPhotoById(photoId);
+			const photo = await getPhotoById(photoId);
 
-		if (!photo) {
-		  return res.status(404).send({
-			status: 'fail',
-			message: `Photo not found with id: [${photoId}]`,
-		  });
-		}
+			if (!photo) {
+			return res.status(404).send({
+				status: 'fail',
+				message: `Photo not found with id: [${photoId}]`,
+			});
+			}
 
-		if (photo.user_id !== user_id) {
-		  return res.status(401).send({
-			status: 'fail',
-			message: `Not authorized to update this photo ID: [${photoId}]`,
-		  });
-		}
-
+			if (photo.user_id !== user_id) {
+			return res.status(401).send({
+				status: 'fail',
+				message: `Not authorized to update this photo ID: [${photoId}]`,
+			});
+			}
 
 		try {
 		  const updatedPhoto = await updatePhoto(photoId, validatedData);
@@ -166,7 +165,8 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 			  comment: updatedPhoto.comment,
 			  user_id: updatedPhoto.user_id,
 			},
-		  });
+		  })
+
 		} catch (err) {
 		  return res.status(500).send({
 			status: 'error',
