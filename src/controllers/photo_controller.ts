@@ -5,9 +5,9 @@ import { createPhoto, getPhotos, getPhotoById, updatePhoto, deletePhoto } from '
 
 const debug = Debug('prisma_photo_app_api:photo_controller')
 
-		/*
-			Get all photos
-		*/
+	/*
+		Get all photos
+	*/
 	export const index = async (req: Request, res: Response) => {
 
 		const user_id = req.token ? req.token.user_id : NaN;
@@ -34,9 +34,9 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 			}
 		}
 
-		/*
-			Get a single photo
-		*/
+	/*
+		Get a single photo
+	*/
 	export const show = async (req: Request, res: Response) => {
 
 		const photoId = Number(req.params.photoId)
@@ -48,25 +48,25 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 
 			if (!photo) {
 				return res.status(404).send({
-				status: "fail",
-				message: `Photo not found with id: [${photoId}]`
+					status: "fail",
+					message: `Photo not found with id: [${photoId}]`
 				});
 			}
 
 			if (photo.user_id !== user_id) {
 				return res.status(401).send({
-				status: "fail",
-				message: "Not authorized to access this photo"
+					status: "fail",
+					message: `Not authorized to access this photo ID: [${photoId}]`
 				});
 			}
 
 			return res.status(200).send({
 				status: "success",
 				data: {
-				id: photo.id,
-				title: photo.title,
-				url: photo.url,
-				comment: photo.comment
+					id: photo.id,
+					title: photo.title,
+					url: photo.url,
+					comment: photo.comment
 				}
 			});
 
@@ -79,7 +79,7 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 	};
 
 	/**
-	 * Create store photo
+	 * Create a photo
 	 */
 	export const store = async (req: Request, res: Response) => {
 
@@ -96,14 +96,6 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 
 		const user_id = req.token ? req.token.user_id : NaN;
 
-		if (!req.token || isNaN(req.token.user_id)) {
-			return res.status(401).send({
-			status: "fail",
-			message: "User is not authenticated"
-			});
-		}
-
-
 		try {
 			const photo = await createPhoto({
 				title: validatedData.title,
@@ -118,9 +110,6 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 			});
 
 		} catch (err) {
-			debug("Error thrown when finding book with id %o: %o",)
-			console.error("Error thrown when creating a photo: ", err)
-
 			return res.status(500).send({
 				staus: 'error',
 				message: 'Internal Server Error, could not retrieve photos'
@@ -128,46 +117,59 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 		}
 	}
 
+
 	/**
-	 * Update a resource
+	 * Update a photo
 	 */
 	export const update = async (req: Request, res: Response) => {
-		const photoId = Number(req.params.photoId)
-		const user_id = req.token ? req.token.user_id : NaN;
-		const validatedData = matchedData(req)
 
-		// Check if the photo exists in the database
+		const validationErrors = validationResult(req);
+
+		if (!validationErrors.isEmpty()) {
+		  return res.status(400).send({
+			status: 'fail',
+			data: validationErrors.array(),
+		  });
+		}
+
+		const photoId = Number(req.params.photoId);
+		const user_id = req.token ? req.token.user_id : NaN;
+		const validatedData = matchedData(req);
+
 		const photo = await getPhotoById(photoId);
 
 		if (!photo) {
 		  return res.status(404).send({
-			status: "fail",
-			message: `Photo not found with id: [${photoId}]`
+			status: 'fail',
+			message: `Photo not found with id: [${photoId}]`,
 		  });
 		}
 
 		if (photo.user_id !== user_id) {
 		  return res.status(401).send({
-			status: "fail",
-			message: "User is not authorized to update this photo"
+			status: 'fail',
+			message: `Not authorized to update this photo ID: [${photoId}]`,
 		  });
 		}
 
+
 		try {
 		  const updatedPhoto = await updatePhoto(photoId, validatedData);
+
 		  return res.status(200).send({
-			status: "success",
+			status: 'success',
 			data: {
 			  id: photoId,
 			  title: updatedPhoto.title,
+			  url: updatedPhoto.url,
 			  comment: updatedPhoto.comment,
-			  user_id: updatedPhoto.user_id
-			}
+			  user_id: updatedPhoto.user_id,
+			},
 		  });
 		} catch (err) {
 		  return res.status(500).send({
-			status: "error",
-			message: "Internal Server Error, could not update photo"
+			status: 'error',
+			message: 'Internal Server Error, could not update photo',
 		  });
 		}
 	  };
@@ -178,30 +180,32 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 	 */
 	export const destroy = async (req: Request, res: Response) => {
 
+		const validationErrors = validationResult(req)
+
+		if (!validationErrors.isEmpty()) {
+			return res.status(400).send({
+				status: "fail",
+				data: validationErrors.array(),
+			})
+		}
+
 		const photoId = Number(req.params.photoId)
 
 		const user_id = req.token ? req.token.user_id : NaN;
-
-		if (!req.token || isNaN(req.token.user_id)) {
-			return res.status(401).send({
-				status: "fail",
-				message: "User is not authenticated"
-			});
-		}
 
 		const photo = await getPhotoById(photoId);
 
 			if (!photo) {
 				return res.status(404).send({
 					status: "fail",
-					message: `There is no photo with  id: ${photoId}`
+					message: `There is no photo with ID: [${photoId}]`
 				});
 			}
 
 			if (photo.user_id !== user_id) {
 				return res.status(401).send({
 					status: "fail",
-					message: "User is not authorized to delet this photo"
+					message: `Not authorized to delet this photo ID: [${photoId}]`
 				});
 			}
 
