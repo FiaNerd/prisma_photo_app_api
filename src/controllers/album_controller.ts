@@ -288,7 +288,7 @@ import {  getPhotoById } from '../services/photo_service'
 		 	if (!photo) {
 			return res.status(404).send({
 				status: "fail",
-				message: `Photo with ID ${photoId} not found in album with ID ${albumId}`
+				message: `Photo with ID: [${photoId}] not found in album with ID: [${albumId}]`
 				});
 			}
 
@@ -302,10 +302,16 @@ import {  getPhotoById } from '../services/photo_service'
 				})
 			}
 
-			if (album.user_id !== user_id || photo.user_id !== user_id) {
+			if (album.user_id !== user_id) {
 				return res.status(401).send({
 					status: "fail",
-					message: "User is not authorized to delet this photo"
+					message: `Not authorized to remove this photo ID: [${photoId}] from album ID: [${albumId}]`
+				})
+			}
+			else if (photo.user_id !== user_id) {
+				return res.status(401).send({
+					status: "fail",
+					message: `Not authorized to remove this photo ID: [${photoId}]`
 				})
 			}
 
@@ -360,7 +366,7 @@ import {  getPhotoById } from '../services/photo_service'
 			if (album.user_id !== user_id) {
 				return res.status(401).send({
 				  status: "fail",
-				  message: "User is not authorized to delete this album"
+				  message: `Not authorized to delete this album ID: [${albumId}]`
 				});
 			}
 
