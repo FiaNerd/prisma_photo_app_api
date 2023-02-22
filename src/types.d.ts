@@ -9,7 +9,7 @@
 
 
 	// PHOTO
-	export type CreatePhoto = {
+	export type CreatePhotoData = {
 		title: string,
 		url: string,
 		comment: string,
