@@ -78,6 +78,7 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 		}
 	};
 
+
 	/**
 	 * Create a photo
 	 */
@@ -200,7 +201,6 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 				});
 			}
 
-
 		try {
 			await deletePhoto(photoId)
 
@@ -210,10 +210,10 @@ const debug = Debug('prisma_photo_app_api:photo_controller')
 		  });
 
 		} catch (err) {
-		return res.status(500).send({
-			status: 'error',
-			message: 'Internal Server Error, could not retrieve photos'
-		})
+			return res.status(500).send({
+				status: 'error',
+				message: 'Internal Server Error, could not retrieve photos'
+			})
 	  }
 	}
 

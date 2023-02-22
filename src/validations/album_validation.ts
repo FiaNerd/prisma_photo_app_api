@@ -7,6 +7,9 @@ export const albumValidationRules = [
 		.isString()
 		.withMessage('Title must be a string')
 		.bail()
+		.notEmpty()
+		.withMessage('Title is required')
+		.bail()
 		.isLength({min: 3})
 		.withMessage('Title must be at least 3 chars long')
 ]

@@ -7,6 +7,9 @@ import {  getPhotoById } from '../services/photo_service'
 
 	const debug = Debug('prisma_photo_app_api:album_contoller')
 
+	/**
+	* 	Get all albums
+	*/
 	export const index = async (req: Request, res: Response) => {
 
 		const user_id = req.token ? req.token.user_id : NaN;
@@ -29,6 +32,9 @@ import {  getPhotoById } from '../services/photo_service'
 		}
 
 
+	/**
+	 *  Get a sinlge a album
+	 */
 	export const show = async (req: Request, res: Response) => {
 
 		const albumId = Number(req.params.albumId)
@@ -55,9 +61,9 @@ import {  getPhotoById } from '../services/photo_service'
 			return res.status(200).send({
 				status: "success",
 				data: {
-				id: album.id,
-				title: album.title,
-				photos: album.photos
+					id: album.id,
+					title: album.title,
+					photos: album.photos
 				}
 			});
 
@@ -70,10 +76,12 @@ import {  getPhotoById } from '../services/photo_service'
 		};
 
 
-
+	/**
+	*  Create a album
+	*/
 	export const store = async (req: Request, res: Response) => {
 
-			const validationErrors = validationResult(req)
+		const validationErrors = validationResult(req)
 
 			if (!validationErrors.isEmpty()) {
 				return res.status(400).send({
@@ -88,83 +96,98 @@ import {  getPhotoById } from '../services/photo_service'
 
 			if (!req.token || isNaN(req.token.user_id)) {
 				return res.status(401).send({
-				status: "fail",
-				message: "User is not authenticated"
-				});
-			}
-
-			try {
-				const album = await createAlbum({
-					title: validatedData.title,
-					user_id,
-				});
-
-				return res.status(201).send({
-					status: "success",
-					data: album
-				});
-
-			} catch (err) {
-				return res.status(500).send({
-					staus: 'error',
-					message: 'Sorry, the server is down'
-				})
-			}
-		}
-
-
-		/*
-			PATCH /albums/:albumId
-		*/
-		export const update = async (req: Request, res: Response) => {
-
-			const albumId = Number(req.params.albumId)
-
-			const user_id = req.token ? req.token.user_id : NaN;
-
-			if (!req.token || isNaN(req.token.user_id)) {
-			return res.status(401).send({
-				status: "fail",
-				message: "User is not authenticated"
-			});
-			}
-
-			const validatedData = matchedData(req)
-
-			try {
-				const patchAlbum = await updateAlbum(albumId, validatedData);
-
-				if (patchAlbum.user_id !== user_id) {
-					return res.status(401).send({
 					status: "fail",
-					message: "User is not authorized to update this photo"
-					});
+					message: "User is not authenticated"
+				});
 			}
 
-		return res.status(200).send({
-			status: "success",
-			data: {
-				id: albumId,
-				title: patchAlbum.title,
-				user_id
-			}
-		});
+		try {
+			const album = await createAlbum({
+				title: validatedData.title,
+				user_id,
+			});
 
-			} catch (err) {
+			return res.status(201).send({
+				status: "success",
+				data: album
+			});
+
+		} catch (err) {
 				return res.status(500).send({
 					staus: 'error',
 					message: 'Sorry, the server is down'
+			})
+		}
+	}
+
+
+	/**
+	*	Update a album
+	*/
+	export const update = async (req: Request, res: Response) => {
+
+		const validationErrors = validationResult(req)
+
+			if (!validationErrors.isEmpty()) {
+				return res.status(400).send({
+					status: "fail",
+					data: validationErrors.array(),
 				})
 			}
+
+		const albumId = Number(req.params.albumId)
+		const user_id = req.token ? req.token.user_id : NaN;
+		const validatedData = matchedData(req)
+
+		const album = await getAlbumById(albumId)
+
+			if (!album) {
+				return res.status(404).send({
+					status: "fail",
+					message: `There is no album with ID: [${albumId}]`
+				});
+			}
+
+			if (album.user_id !== user_id) {
+				return res.status(401).send({
+					status: "fail",
+					message: `Not authorized to update this album ID: [${albumId}]`
+				});
+			}
+
+		try {
+			const patchAlbum = await updateAlbum(albumId, validatedData);
+
+			if (patchAlbum.user_id !== user_id) {
+				return res.status(401).send({
+					status: "fail",
+					message: "User is not authorized to update this album"
+				});
+			}
+
+			return res.status(200).send({
+				status: "success",
+				data: {
+					id: albumId,
+					title: patchAlbum.title,
+					user_id
+				}
+			});
+
+		} catch (err) {
+			return res.status(500).send({
+				staus: 'error',
+				message: 'Internal Server Error, could not retrieve album'
+			})
 		}
+	}
 
 
-		export const addPhotoToAlbum = async (req: Request, res: Response) => {
+	export const addPhotoToAlbum = async (req: Request, res: Response) => {
 
-			const photoIds: number[] = req.body.photo_id
-			const albumId = Number(req.params.albumId)
-
-			const user_id = req.token ? req.token.user_id : NaN;
+		const photoIds: number[] = req.body.photo_id
+		const albumId = Number(req.params.albumId)
+		const user_id = req.token ? req.token.user_id : NaN;
 
 			if (!req.token || isNaN(req.token.user_id)) {
 				return res.status(401).send({
@@ -173,7 +196,7 @@ import {  getPhotoById } from '../services/photo_service'
 				});
 			}
 
-			const album = await getAlbumById(albumId);
+		const album = await getAlbumById(albumId);
 
 			if (!album) {
 				return res.status(400).send({
@@ -215,29 +238,27 @@ import {  getPhotoById } from '../services/photo_service'
 			 	});
 			  }
 
+		try {
+			await createPhotosToAlbum(albumId, photoIds)
 
+			return res.status(200).send({
+				status: "success",
+				data: null
+			});
 
-			try {
-				 await createPhotosToAlbum(albumId, photoIds)
-
-				 return res.status(200).send({
-					status: "success",
-					data: null
-			 	});
-
-			} catch (err) {
-				debug("Error thrown when adding photo %o to a album %o: %o", updateAlbum)
+		} catch (err) {
+			debug("Error thrown when adding photo %o to a album %o: %o", updateAlbum)
 				return res.status(500).send({
 					staus: 'error',
-					message: 'Sorry, the server is down'
-				})
-			}
+					message: 'Internal Server Error, could not retrieve album'
+			})
 		}
+	}
 
 
-		export const removePhotoFromAlbum = async (req: Request, res: Response) => {
-			const albumId = Number(req.params.albumId);
-			const photoId = Number(req.params.photoId);
+	export const removePhotoFromAlbum = async (req: Request, res: Response) => {
+		const albumId = Number(req.params.albumId);
+		const photoId = Number(req.params.photoId);
 
 		const user_id = req.token ? req.token.user_id : NaN;
 
@@ -248,24 +269,24 @@ import {  getPhotoById } from '../services/photo_service'
 			  });
 			}
 
-			try {
-			  const photo = await getPhotoById(photoId);
+		try {
+		 	const photo = await getPhotoById(photoId);
 
-			  if (!photo) {
+		 	if (!photo) {
+			return res.status(404).send({
+				status: "fail",
+				message: `Photo with ID ${photoId} not found in album with ID ${albumId}`
+				});
+			}
+
+			const album = await getAlbumById(albumId);
+
+			if (!album ) {
 				return res.status(404).send({
 					status: "fail",
-					 message: `Photo with ID ${photoId} not found in album with ID ${albumId}`
-				});
-			  }
-
-			  const album = await getAlbumById(albumId);
-
-			  if (!album ) {
-				return res.status(404).send({
-				  status: "fail",
-				  message: `Album with ID ${albumId} not
-				  found`
-			  })
+					message: `Album with ID ${albumId} not
+					found`
+				})
 			}
 
 			if (album.user_id !== user_id || photo.user_id !== user_id) {
@@ -279,67 +300,66 @@ import {  getPhotoById } from '../services/photo_service'
 
 			if (!photoInAlbum) {
 			  return res.status(404).send({
-				status: "fail",
-				message: `Photo with ID ${photoId} not found in album with ID ${albumId}`
-			  });
+					status: "fail",
+					message: `Photo with ID ${photoId} not found in album with ID ${albumId}`
+			 	});
 			}
 
-			  await disconnectPhotoFromAlbum(albumId, photoId);
+			await disconnectPhotoFromAlbum(albumId, photoId);
 
 				return res.status(200).send({
 					status: "success",
 				    message: "Photo removed from album"
 				})
 
-			} catch (err) {
-				debug("Error thrown when removing photo %o from album %o: %o")
-			  return res.status(500).send({
+		} catch (err) {
+			return res.status(500).send({
 				status: "error",
 				message: "Internal Server Error, try again"
-			  });
-			}
-		  };
+			})
+		}
+	}
 
 
-		  export const destroy = async (req: Request, res: Response) => {
+	export const destroy = async (req: Request, res: Response) => {
 
-			  const albumId = Number(req.params.albumId);
+		const albumId = Number(req.params.albumId);
 
-			  const user_id = req.token ? req.token.user_id : NaN;
+		const user_id = req.token ? req.token.user_id : NaN;
 
-			  if (!req.token || isNaN(req.token.user_id)) {
+			if (!req.token || isNaN(req.token.user_id)) {
 				return res.status(401).send({
-				  status: "fail",
-				  message: "User is not authenticated"
+				 	status: "fail",
+				 	message: "User is not authenticated"
 				})
-			  }
+			}
 
-		 try {
-			  const album = await deleteAlbum(albumId);
+		try {
+			const album = await deleteAlbum(albumId);
 
-			  if (!album) {
+			if (!album) {
 				return res.status(404).send({
-				  status: "fail",
-				  message: `Album with ID ${albumId} not found`
+					status: "fail",
+					message: `Album with ID ${albumId} not found`
 				});
-			  }
+			}
 
-			  if (album.user_id !== user_id) {
+			if (album.user_id !== user_id) {
 				return res.status(401).send({
 				  status: "fail",
 				  message: "User is not authorized to delete this album"
 				});
-			  }
+			}
 
-			  res.status(200).send({
+			res.status(200).send({
 				status: "success",
 				data: null
-			  });
+			});
 
-			} catch (err) {
-			  return res.status(500).send({
+		} catch (err) {
+			return res.status(500).send({
 				status: "error",
 				message: "Internal Server Error, try again"
-			  });
-			}
-		  };
+			});
+		}
+	};
