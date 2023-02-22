@@ -5,7 +5,8 @@ import { matchedData, validationResult } from 'express-validator'
 import {  getAlbums, getAlbumById, createAlbum, updateAlbum, createPhotosToAlbum, disconnectPhotoFromAlbum, deleteAlbum } from '../services/album_service'
 import {  getPhotoById } from '../services/photo_service'
 
-	const debug = Debug('prisma_photo_app_api:album_contoller')
+	const debug = Debug('prisma_photo_app_api:album_controller');
+
 
 	/**
 	* 	Get all albums
@@ -253,6 +254,7 @@ import {  getPhotoById } from '../services/photo_service'
 			}
 
 		try {
+
 			await createPhotosToAlbum(albumId, photoIds)
 
 			return res.status(200).send({
