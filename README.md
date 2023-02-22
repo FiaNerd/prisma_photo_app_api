@@ -35,6 +35,9 @@ https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
 and then place it in the server folder:
 .env 
 
+If you don't wanna come up with your own ACCES_TOKEN and REFRESH_TOKEN you can write this is the terminal:
+node
+require('crypto').randomBytes(32).toString('hex')
 
 # Coonnection string example
   DATABASE_URL="mysql://johndoe:randompassword@localhost:3306/prisma_photo_app"
